@@ -9,4 +9,4 @@ The objective is to build an useful audio workbench focused on mixing and master
 This is currently the 0.1 version. It is only a really simple mixer app demo where you can route channels, pan and set the gain, among other customization options. Render is actually fixed to 5 seconds.
 
 ## How to use it simplified? 🤔
-In this build there is no proper installer or a full developed method for this. To use it simply go to the "Build" folder and download de executable to use it.
+In this build there is no proper installer or a full developed method for this. To use it simply go to the "Build" folder and download the executable to use it.
