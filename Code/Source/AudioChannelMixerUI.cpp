@@ -12,8 +12,8 @@
 #include "AudioChannelMixerUI.h"
 
 //==============================================================================
-AudioChannelMixerUI::AudioChannelMixerUI(juce::ValueTree& projectData, juce::String channelUuid) : 
-    flexContainer(juce::FlexBox::Direction::column, juce::FlexBox::Wrap::noWrap
+AudioChannelMixerUI::AudioChannelMixerUI(juce::ValueTree& projectData, juce::String channelUuid) 
+    : flexContainer(juce::FlexBox::Direction::column, juce::FlexBox::Wrap::noWrap
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
     , projectData(projectData)

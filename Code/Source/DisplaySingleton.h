@@ -25,6 +25,7 @@ public:
 private:
 
     DisplaySingleton();
+    ~DisplaySingleton() { clearSingletonInstance(); };
 
     juce::Displays displays;
     juce::Rectangle<int> displayBounds;

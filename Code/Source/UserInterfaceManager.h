@@ -16,6 +16,7 @@
 #include "Footer.h"
 #include "EgawMenuBarModel.h"
 #include "MixerView.h"
+#include "PlaylistView.h";
 #include "SignalManagerUI.h"
 #include "RoutingActionStateManager.h"
 #include "RoutingOverlay.h"
@@ -25,13 +26,14 @@
 //==============================================================================
 /*
 */
-class UserInterfaceManager  : public juce::Component, public juce::Value::Listener
+class UserInterfaceManager  : public juce::Component, public juce::Value::Listener, public juce::ValueTree::Listener
 {
 public:
     UserInterfaceManager(juce::ValueTree&);
     ~UserInterfaceManager() override;
 
     void valueChanged(juce::Value& value) override;
+    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -48,7 +50,12 @@ private:
     juce::MenuBarComponent menuBarComponent;
     Footer footer;
 
+    //0 = MIXER
+    //1 = PLAYLIST
+    //2 = ROOM
+    int selectedView;
     MixerView mixerView;
+    PlaylistView playlistView;
 
     RoutingOverlay routingOverlay;
 

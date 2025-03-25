@@ -30,12 +30,13 @@ public:
     bool checkIsGlobalSoloActive() { return isGlobalSoloActive; };
     void resetSingleton();
 
-    JUCE_DECLARE_SINGLETON(SoloControlSingleton, false);
+    JUCE_DECLARE_SINGLETON(SoloControlSingleton, true);
 
 
 private:
 
     SoloControlSingleton();
+    ~SoloControlSingleton() { clearSingletonInstance(); };
 
     void valueChanged(juce::Value& value) override
     {

@@ -18,6 +18,7 @@ AudioSystemBus::AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup& audio
     , projectData(projectData)
     , fileRestoreProjectData(fileRestoreProjectData)
 {
+    playing = false;
     projectData.setProperty("bpm", "90.00", nullptr);
 
     SignalManagerUI::getInstance()->addListener(this);
@@ -59,14 +60,17 @@ void AudioSystemBus::valueChanged(juce::Value& value)
             restoreProjectData();
             break;
         case SignalManagerUI::Signal::PLAY_AUDIO:
+            playing = true;
             transportSource.start();
             break;
         case SignalManagerUI::Signal::PAUSE_AUDIO:
+            playing = false;
             transportSource.stop();
             break;
         case SignalManagerUI::Signal::STOP_AUDIO:
+            playing = false;
             transportSource.stop();
-            transportSource.setPosition(0);
+            setTransportToBegin();
             prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
             break;
         case SignalManagerUI::Signal::ADD_AUDIO_CHANNEL:
@@ -131,6 +135,8 @@ void AudioSystemBus::prepareToPlay(int samplesPerBlockExpected, double sampleRat
     DBG("PREPARE TO PLAY buffer size = " << audioDeviceSetup.bufferSize);
     DBG("PREPARE TO PLAY sample rate = " << audioDeviceSetup.sampleRate);
 
+    GlobalPlayhead::getInstance()->setSampleRate(sampleRate);
+
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 
     masterBusChannel.prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -156,10 +162,16 @@ void AudioSystemBus::getNextAudioBlock(const juce::AudioSourceChannelInfo& buffe
 
     bufferToFill.clearActiveBufferRegion();
     transportSource.getNextAudioBlock(bufferToFill);
+
+    if(playing)
+        GlobalPlayhead::getInstance()->add_numSamples(bufferToFill.numSamples);
+    //globalPlayhead += bufferToFill.numSamples;
 }
 
 void AudioSystemBus::setNextReadPosition(juce::int64 newPosition)
 {
+    GlobalPlayhead::getInstance()->setPlayheadPosition(newPosition);
+    //globalPlayhead.store(newPosition);
     transportSource.setNextReadPosition(newPosition);
 }
 
@@ -183,14 +195,14 @@ void AudioSystemBus::addMixBusChannel()
 {
     mixBusChannels.add(new MixBusChannel());
     mixBusChannels.getLast()->setMixerPosition(channelOrder.getNumChildren());
+    mixBusChannels.getLast()->routeTo(&masterBusChannel, true);
+
     channelOrder.appendChild(juce::ValueTree(mixBusChannels.getLast()->getInternalChannelId()), nullptr);
     auto mixBusChannelTree = mixBusChannels.getLast()->getValueTree();
     auto nombreMixBusChannel = juce::String("Mix Bus ");
     nombreMixBusChannel.append(juce::String(mixBusChannels.size()), 3);
     mixBusChannelTree.setProperty("Name", nombreMixBusChannel, nullptr);
     projectData.appendChild(mixBusChannelTree, nullptr);
-
-    //mixBusChannels.getLast()->routeTo(&masterBusChannel, true);
 
     prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
 
@@ -260,10 +272,12 @@ void AudioSystemBus::doAddAudioChannel()
 {
     audioChannels.add(tempAudioChannel);
     tempAudioChannel->setMixerPosition(channelOrder.getNumChildren());
+    tempAudioChannel->routeTo(&masterBusChannel, true);
+
+    GlobalPlayhead::getInstance()->contestForTimeLength(tempAudioChannel->getTotalLength());
+
     channelOrder.appendChild(juce::ValueTree(tempAudioChannel->getInternalChannelId()), nullptr);
     projectData.appendChild(tempAudioChannel->getValueTree(), nullptr);
-
-    //tempAudioChannel->routeTo(&masterBusChannel, true);
 
     prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
 }
@@ -362,11 +376,21 @@ void AudioSystemBus::processNextAudioBlock(const juce::AudioSourceChannelInfo& b
 
     bufferToFill.clearActiveBufferRegion();
     masterBusChannel.getNextAudioBlock(bufferToFill);
+
+    GlobalPlayhead::getInstance()->add_numSamples(bufferToFill.numSamples);
+    //globalPlayhead += bufferToFill.numSamples;
 }
 
 void AudioSystemBus::start()
 {
     transportSource.start();
+}
+
+void AudioSystemBus::setTransportToBegin()
+{
+    transportSource.setPosition(0);
+    GlobalPlayhead::getInstance()->setPlayheadPosition(0);
+    //globalPlayhead.store(0);
 }
 
 void AudioSystemBus::restoreProjectData()
@@ -376,6 +400,8 @@ void AudioSystemBus::restoreProjectData()
     projectData.setProperty("bpm", fileRestoreProjectData.getProperty("bpm"), nullptr);
     projectData.setProperty("saveFilePath", fileRestoreProjectData.getProperty("saveFilePath"), nullptr);
     projectData.setProperty("projectName", fileRestoreProjectData.getProperty("projectName"), nullptr);
+    projectData.setProperty("View", fileRestoreProjectData.getProperty("View"), nullptr); //SETEA LA VISTA ACTUAL
+
 
     projectData.appendChild(channelOrder, nullptr);
 

@@ -70,7 +70,7 @@ void BpmEditor::checkValidBpmValueAndSet(juce::String bpmValue)
 
     if (!std::regex_match(bpmValue.toStdString(), regexPattern))
     {
-        // Si el texto no coincide con el formato, revertir al último valor válido
+        // Si el texto no coincide con el formato, revertir al Ãºltimo valor vÃ¡lido
         
         //setText(lastBpmValue, false);
         //audioSystemBus.getProjectData()->setProperty("bpm", lastBpmValue, nullptr);

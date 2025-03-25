@@ -48,7 +48,9 @@ bool RenderThread::renderNow()
         return false;
 
     outputStream.release();
-    totalSamples = 5 * sampleRate; // Total samples to render
+    auto seconds_to_render = GlobalPlayhead::getInstance()->getRealAudioTime();
+    totalSamples = seconds_to_render * sampleRate; // Total samples to render
+    audioSource.setTransportToBegin();
 
     DBG("Preparing thread");
     DBG("THREAD BUFFER SIZE , SAMPLE RATE: " << bufferSize << " , " << sampleRate);

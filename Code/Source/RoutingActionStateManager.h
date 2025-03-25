@@ -49,6 +49,7 @@ public:
 private:
 
     RoutingActionStateManager();
+    ~RoutingActionStateManager() { clearSingletonInstance(); };
 
     void valueChanged(juce::Value& value) override
     {

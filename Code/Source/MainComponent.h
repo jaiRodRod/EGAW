@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "ZoomConstants.h"
 
 #include "AudioSystemBus.h"
 #include "UserInterfaceManager.h"
@@ -9,6 +10,7 @@
 #include "SignalManagerUI.h"
 #include "ProgressWindowUI.h"
 #include "RenderThread.h"
+#include "GlobalPlayhead.h"
 
 //==============================================================================
 /*

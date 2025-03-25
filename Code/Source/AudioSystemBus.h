@@ -16,9 +16,11 @@
 #include "SignalManagerUI.h"
 #include "SoloControlSingleton.h"
 #include "RoutingActionStateManager.h"
+#include "GlobalPlayhead.h"
 
 class AudioSystemBus : public juce::PositionableAudioSource, public juce::Value::Listener, public juce::ValueTree::Listener
 {
+
 public:
 
     AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup&, juce::ValueTree&, juce::ValueTree&);
@@ -65,9 +67,11 @@ public:
     void processNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill);
 
     void start();
+    void setTransportToBegin();
     juce::AudioTransportSource& getTransportSource() { return transportSource; };
 
 private:
+
 
     juce::ValueTree projectData;
     juce::ValueTree fileRestoreProjectData;
@@ -90,6 +94,7 @@ private:
     //int beatNumerator;
     //int beatDivider;
 
+    bool playing;
     juce::AudioTransportSource transportSource;
 
     MixBusChannel masterBusChannel;

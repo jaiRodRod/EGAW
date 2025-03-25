@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="jGxCnk" name="EGAW Application" projectType="guiapp" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" version="0.1">
   <MAINGROUP id="ZKvsgm" name="EGAW Application">
     <GROUP id="{D92BC2F2-4844-927F-0EAE-1C4C99ABF83D}" name="Source">
+      <GROUP id="{0505B0FC-A672-346C-AD6B-6D32A837FF57}" name="Constants">
+        <FILE id="cf3Yys" name="ZoomConstants.h" compile="0" resource="0" file="Source/ZoomConstants.h"/>
+      </GROUP>
       <GROUP id="{82DB6A44-8CE4-9DCE-9B6A-E76D07105F8E}" name="Utils">
         <FILE id="Rc8sm3" name="DisplaySingleton.cpp" compile="1" resource="0"
               file="Source/DisplaySingleton.cpp"/>
@@ -17,12 +20,67 @@
               resource="0" file="Source/RoutingActionStateManager.cpp"/>
         <FILE id="AOTWT3" name="RoutingActionStateManager.h" compile="0" resource="0"
               file="Source/RoutingActionStateManager.h"/>
+        <FILE id="OGNr1k" name="SharedLock_UI_Timers.cpp" compile="1" resource="0"
+              file="Source/SharedLock_UI_Timers.cpp"/>
+        <FILE id="jAGnZ7" name="SharedLock_UI_Timers.h" compile="0" resource="0"
+              file="Source/SharedLock_UI_Timers.h"/>
         <FILE id="anXo9a" name="SignalManagerUI.cpp" compile="1" resource="0"
               file="Source/SignalManagerUI.cpp"/>
         <FILE id="uMsafJ" name="SignalManagerUI.h" compile="0" resource="0"
               file="Source/SignalManagerUI.h"/>
       </GROUP>
       <GROUP id="{78C3C251-8374-3633-E37B-FFED66427753}" name="UserInterface">
+        <GROUP id="{4C7D3674-EF41-A64F-BCD3-CE11F92BEBD2}" name="PlaylistInterface">
+          <GROUP id="{43A8F985-39E9-F35B-5CE0-1FA6393E6026}" name="CustomComponents">
+            <FILE id="RAwSE9" name="TransportComponent.cpp" compile="1" resource="0"
+                  file="Source/TransportComponent.cpp"/>
+            <FILE id="tGjbBG" name="TransportComponent.h" compile="0" resource="0"
+                  file="Source/TransportComponent.h"/>
+            <FILE id="fI0gnl" name="TransportBoxComponent.cpp" compile="1" resource="0"
+                  file="Source/TransportBoxComponent.cpp"/>
+            <FILE id="rQOSw7" name="TransportBoxComponent.h" compile="0" resource="0"
+                  file="Source/TransportBoxComponent.h"/>
+            <FILE id="iIqs4S" name="AudioChannelPlaylistUI.cpp" compile="1" resource="0"
+                  file="Source/AudioChannelPlaylistUI.cpp"/>
+            <FILE id="o0O9my" name="AudioChannelPlaylistUI.h" compile="0" resource="0"
+                  file="Source/AudioChannelPlaylistUI.h"/>
+            <FILE id="JlgOD2" name="AudioThumbnailChannelPlaylistUI.cpp" compile="1"
+                  resource="0" file="Source/AudioThumbnailChannelPlaylistUI.cpp"/>
+            <FILE id="ppmaKK" name="AudioThumbnailChannelPlaylistUI.h" compile="0"
+                  resource="0" file="Source/AudioThumbnailChannelPlaylistUI.h"/>
+            <FILE id="AAunx9" name="CustomScrollViewport.cpp" compile="1" resource="0"
+                  file="Source/CustomScrollViewport.cpp"/>
+            <FILE id="DK9KtH" name="CustomScrollViewport.h" compile="0" resource="0"
+                  file="Source/CustomScrollViewport.h"/>
+          </GROUP>
+          <FILE id="ln4JRI" name="PlaylistChannelsView.cpp" compile="1" resource="0"
+                file="Source/PlaylistChannelsView.cpp"/>
+          <FILE id="QYkdWq" name="PlaylistChannelsView.h" compile="0" resource="0"
+                file="Source/PlaylistChannelsView.h"/>
+          <FILE id="fyhvzS" name="PlaylistThumbnailChannelsView.cpp" compile="1"
+                resource="0" file="Source/PlaylistThumbnailChannelsView.cpp"/>
+          <FILE id="etqaAP" name="PlaylistThumbnailChannelsView.h" compile="0"
+                resource="0" file="Source/PlaylistThumbnailChannelsView.h"/>
+          <FILE id="VuaSJP" name="PlaylistView.cpp" compile="1" resource="0"
+                file="Source/PlaylistView.cpp"/>
+          <FILE id="rver5b" name="PlaylistView.h" compile="0" resource="0" file="Source/PlaylistView.h"/>
+        </GROUP>
+        <GROUP id="{7C5CFAB6-B4D3-1139-4B14-CFF84AC9110B}" name="Footer">
+          <FILE id="sBVc5E" name="BpmEditor.cpp" compile="1" resource="0" file="Source/BpmEditor.cpp"/>
+          <FILE id="IvwNWh" name="BpmEditor.h" compile="0" resource="0" file="Source/BpmEditor.h"/>
+          <FILE id="uVEUiX" name="Footer.cpp" compile="1" resource="0" file="Source/Footer.cpp"/>
+          <FILE id="EjK4ID" name="Footer.h" compile="0" resource="0" file="Source/Footer.h"/>
+          <FILE id="cbT9GK" name="PlayerControlGrid.cpp" compile="1" resource="0"
+                file="Source/PlayerControlGrid.cpp"/>
+          <FILE id="jTMtNz" name="PlayerControlGrid.h" compile="0" resource="0"
+                file="Source/PlayerControlGrid.h"/>
+          <FILE id="hutWZx" name="TimeViewer.cpp" compile="1" resource="0" file="Source/TimeViewer.cpp"/>
+          <FILE id="yrMd9v" name="TimeViewer.h" compile="0" resource="0" file="Source/TimeViewer.h"/>
+          <FILE id="BrhPz4" name="ViewSelectorColumn.cpp" compile="1" resource="0"
+                file="Source/ViewSelectorColumn.cpp"/>
+          <FILE id="FrpxvQ" name="ViewSelectorColumn.h" compile="0" resource="0"
+                file="Source/ViewSelectorColumn.h"/>
+        </GROUP>
         <GROUP id="{EF5DACD9-1B39-20AA-06BA-9AC9D8775BF9}" name="MixerInterface">
           <GROUP id="{4B220F9E-17E9-A80E-4824-1777A93393C2}" name="CustomComponents">
             <FILE id="WdBNjp" name="ChannelColourSelector.cpp" compile="1" resource="0"
@@ -100,18 +158,10 @@
           <FILE id="dZdmRO" name="RoutingOverlay.h" compile="0" resource="0"
                 file="Source/RoutingOverlay.h"/>
         </GROUP>
-        <FILE id="sBVc5E" name="BpmEditor.cpp" compile="1" resource="0" file="Source/BpmEditor.cpp"/>
-        <FILE id="IvwNWh" name="BpmEditor.h" compile="0" resource="0" file="Source/BpmEditor.h"/>
         <FILE id="KYMbck" name="EgawMenuBarModel.cpp" compile="1" resource="0"
               file="Source/EgawMenuBarModel.cpp"/>
         <FILE id="IFdp7I" name="EgawMenuBarModel.h" compile="0" resource="0"
               file="Source/EgawMenuBarModel.h"/>
-        <FILE id="uVEUiX" name="Footer.cpp" compile="1" resource="0" file="Source/Footer.cpp"/>
-        <FILE id="EjK4ID" name="Footer.h" compile="0" resource="0" file="Source/Footer.h"/>
-        <FILE id="cbT9GK" name="PlayerControlGrid.cpp" compile="1" resource="0"
-              file="Source/PlayerControlGrid.cpp"/>
-        <FILE id="jTMtNz" name="PlayerControlGrid.h" compile="0" resource="0"
-              file="Source/PlayerControlGrid.h"/>
         <FILE id="TyZH07" name="UserInterfaceManager.cpp" compile="1" resource="0"
               file="Source/UserInterfaceManager.cpp"/>
         <FILE id="M3m859" name="UserInterfaceManager.h" compile="0" resource="0"
@@ -140,6 +190,10 @@
               file="Source/AudioSystemBus.h"/>
         <FILE id="sbcRAb" name="Channel.cpp" compile="1" resource="0" file="Source/Channel.cpp"/>
         <FILE id="tCUI8o" name="Channel.h" compile="0" resource="0" file="Source/Channel.h"/>
+        <FILE id="i2v9AV" name="GlobalPlayhead.cpp" compile="1" resource="0"
+              file="Source/GlobalPlayhead.cpp"/>
+        <FILE id="otaN9p" name="GlobalPlayhead.h" compile="0" resource="0"
+              file="Source/GlobalPlayhead.h"/>
         <FILE id="aWF80a" name="MixBusChannel.cpp" compile="1" resource="0"
               file="Source/MixBusChannel.cpp"/>
         <FILE id="hLIhZA" name="MixBusChannel.h" compile="0" resource="0" file="Source/MixBusChannel.h"/>

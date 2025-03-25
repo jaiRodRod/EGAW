@@ -12,6 +12,7 @@
 #include <JuceHeader.h>
 #include "AudioSystemBus.h"
 #include "SignalManagerUI.h";
+#include "GlobalPlayhead.h"
 
 class RenderThread : public juce::Thread, private juce::AsyncUpdater
 {

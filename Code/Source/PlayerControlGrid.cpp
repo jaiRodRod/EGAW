@@ -43,12 +43,15 @@ void PlayerControlGrid::valueChanged(juce::Value& value)
     {
     case SignalManagerUI::Signal::PLAY_AUDIO:
         setPlaying(true);
+        playButton.setButtonText("Pause");
         break;
     case SignalManagerUI::Signal::PAUSE_AUDIO:
         setPlaying(false);
+        playButton.setButtonText("Play");
         break;
     case SignalManagerUI::Signal::STOP_AUDIO:
         setPlaying(false);
+        playButton.setButtonText("Play");
         break;
     default:
         break;
@@ -89,18 +92,15 @@ void PlayerControlGrid::playButtonClicked()
 {
     if (playing == false)
     {
-        playButton.setButtonText("Pause");
         SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::PLAY_AUDIO);
     }
     else if (playing == true)
     {
-        playButton.setButtonText("Play");
         SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::PAUSE_AUDIO);
     }
 }
 
 void PlayerControlGrid::stopButtonClicked()
 {
-    playButton.setButtonText("Play");
     SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::STOP_AUDIO);
 }

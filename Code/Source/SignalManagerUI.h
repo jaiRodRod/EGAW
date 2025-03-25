@@ -49,12 +49,13 @@ public:
 private:
 
     SignalManagerUI();
+    ~SignalManagerUI() { clearSingletonInstance(); };
 
     void valueChanged(juce::Value& value) override
     {
         //Se declara para deshacer la abstraccion pero no se utilizará nada
     }
 
-
+    juce::CriticalSection listenerLock;
     juce::Value signalValue;
 };

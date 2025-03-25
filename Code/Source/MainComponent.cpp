@@ -73,8 +73,9 @@ MainComponent::MainComponent()
     setAudioChannels(0, 2);
 
     auto setup = deviceManager.getAudioDeviceSetup();
-    setup.sampleRate = 44100.0;
-    setup.bufferSize = 512;
+    GlobalPlayhead::getInstance()->setSampleRate(setup.sampleRate);
+    //setup.sampleRate = 48000.0;
+    //setup.bufferSize = 512;
     setup.inputChannels = 0;
     setup.outputChannels = 2;
     deviceManager.setAudioDeviceSetup(setup, true);
@@ -84,6 +85,9 @@ MainComponent::MainComponent()
     juce::Logger::writeToLog("Buffer Size: " + juce::String(currentSetup.bufferSize));
 
     audioSystemBus.setAudioDeviceSetup(deviceManager.getAudioDeviceSetup());
+
+    projectData.setProperty("View", "ROOM", nullptr); //SETEA LA VISTA ACTUAL
+    projectData.setProperty("Zoom", playlistThumbnailZoomConstants::x1, nullptr); //SETEA EL ZOOM ACTUAL
 
     formatManager.registerBasicFormats();
     addAndMakeVisible(userInterfaceManager);

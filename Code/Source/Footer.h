@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 #include "PlayerControlGrid.h"
+#include "ViewSelectorColumn.h"
+#include "TimeViewer.h"
 
 #define MENU_BACKGROUND_COLOUR_ID 0
 
@@ -30,7 +32,9 @@ public:
 private:
 
     juce::ValueTree& projectData;
+    ViewSelectorColumn viewSelectorColumn;
     PlayerControlGrid playerControlGrid;
+    TimeViewer timeViewer;
     juce::FlexBox flexBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Footer)

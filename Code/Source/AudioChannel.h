@@ -14,6 +14,7 @@
 
 #include "SignalManagerUI.h"
 #include "SoloControlSingleton.h"
+#include "GlobalPlayhead.h"
 
 class AudioChannel : public Channel, public juce::ValueTree::Listener, public juce::Value::Listener
 {
@@ -39,6 +40,8 @@ public:
     bool isLooping() const override;
     void setLooping(bool) override;
 
+    void setStartTime(double seconds); 
+
     /*
     float getGain() const;          
     void setGain(float gainValue);  //Encapsular para hacerlo undoable
@@ -61,11 +64,16 @@ private:
     void setSolo(bool soloValue); //Hacerlo undoable
     void setSoloMute();
 
+    std::atomic<juce::int64> startSample{ 0 };
+    std::atomic<bool> isActive{ false };
+    double sampleRate = 48000.0;
+    double fileSampleRate = 48000.0;
 
     std::unique_ptr<juce::FileChooser> fileChooser; //Not needed to re-init
 
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
+    std::unique_ptr<juce::ResamplingAudioSource> resampler;
     juce::File currentFile;
     bool isPrepared = false;
 

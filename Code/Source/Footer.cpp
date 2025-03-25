@@ -17,12 +17,17 @@ Footer::Footer(juce::ValueTree& projectData)
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
     , projectData(projectData)
+    , viewSelectorColumn(projectData)
     , playerControlGrid(projectData)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
+    addAndMakeVisible(viewSelectorColumn);
+
     addAndMakeVisible(playerControlGrid);
+
+    addAndMakeVisible(timeViewer);
 }
 
 Footer::~Footer()
@@ -44,8 +49,13 @@ void Footer::resized()
 
     flexBox.items.clear();
 
+    auto viewSelectorWidth = (float)((footerBounds.getWidth() / 12) * 1);
+    flexBox.items.add(juce::FlexItem(viewSelectorColumn).withMinHeight((float)footerBounds.getHeight()).withMinWidth(viewSelectorWidth));
+
     auto playerControlWidth = (float) ((footerBounds.getWidth() / 12) * 5);
     flexBox.items.add(juce::FlexItem(playerControlGrid).withMinHeight((float) footerBounds.getHeight()).withMinWidth(playerControlWidth));
+
+    flexBox.items.add(juce::FlexItem(timeViewer).withMinHeight((float)footerBounds.getHeight()).withMinWidth(viewSelectorWidth));
 
     flexBox.performLayout(footerBounds);
 }
