@@ -17,6 +17,7 @@ CustomScrollViewport::CustomScrollViewport(juce::Viewport& parentViewport) : par
 
 void CustomScrollViewport::mouseWheelMove(const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel)
 {
+    /*
     if (std::abs(wheel.deltaY) > std::abs(wheel.deltaX))
     {
         juce::MouseEvent e(event.source, event.position, event.mods, event.pressure, event.orientation, event.rotation, 
@@ -27,4 +28,14 @@ void CustomScrollViewport::mouseWheelMove(const juce::MouseEvent& event, const j
     }
 
     Viewport::mouseWheelMove(event, wheel);
+    */
+
+    if (wheel.deltaY != 0.0f) // Only forward vertical scroll events
+    {
+        parentViewport.mouseWheelMove(event, wheel);
+    }
+    else
+    {
+        Viewport::mouseWheelMove(event, wheel);
+    }
 }

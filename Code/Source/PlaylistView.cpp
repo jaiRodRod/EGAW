@@ -12,15 +12,17 @@
 #include "PlaylistView.h"
 
 //==============================================================================
-PlaylistView::PlaylistView(juce::ValueTree& projectData) 
+PlaylistView::PlaylistView(juce::ValueTree& projectData, juce::ValueTree& playheadState) 
     : projectData(projectData)
-    , playlistChannelsView(projectData, verticalViewport)
+    , playheadState(playheadState)
+    , playlistChannelsView(projectData, playheadState, verticalViewport)
 {
     projectData.addListener(this);
-    SignalManagerUI::getInstance()->addListener(this);
+    /*SignalManagerUI::getInstance()->addListener(this);*/
 
     addAndMakeVisible(playlistChannelsView);
 
+    
     verticalViewport.setScrollBarPosition(true, false);
     verticalViewport.setScrollBarsShown(true, false, true, false);
     verticalViewport.setViewedComponent(&playlistChannelsView);
@@ -30,9 +32,10 @@ PlaylistView::PlaylistView(juce::ValueTree& projectData)
 PlaylistView::~PlaylistView()
 {
     projectData.removeListener(this);
-    SignalManagerUI::getInstance()->removeListener(this);
+    /*SignalManagerUI::getInstance()->removeListener(this);*/
 }
 
+/*
 void PlaylistView::valueChanged(juce::Value& value)
 {
     if (value == SignalManagerUI::getInstance()->getValue())
@@ -50,12 +53,13 @@ void PlaylistView::valueChanged(juce::Value& value)
         }
     }
 }
+*/
 
 void PlaylistView::valueTreeChildAdded(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenAdded)
 {
     if (parentTree == projectData)
     {
-        resized();
+        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -73,8 +77,8 @@ void PlaylistView::resized()
     auto playlistChannelHeight = (displayBounds.getHeight() / 12);
 
     //verticalViewport.setViewPositionProportionately(playlistChannelHeight, 0);
+
     verticalViewport.setBounds(area);
-    //Edit
 
     playlistChannelsView.setSize(area.getWidth(), (playlistChannelHeight * (getNumAudioChannels() + 1)) + (displayBounds.getHeight() / 36));
 }

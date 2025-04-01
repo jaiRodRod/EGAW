@@ -28,7 +28,7 @@ public:
 
 private:
 
-    juce::ValueTree& projectData;
+    juce::ValueTree projectData;
     juce::String channelUuid;
 
     juce::FlexBox flexContainer;

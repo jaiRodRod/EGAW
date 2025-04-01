@@ -13,14 +13,15 @@
 
 
 //==============================================================================
-UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData) 
+UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData, juce::ValueTree& playheadState) 
     : menuBarModel()
     , menuBarComponent(&menuBarModel)
     , projectData(projectData)
-    , footer(projectData)
+    , playheadState(playheadState)
+    , footer(projectData, playheadState)
     , selectedView(2)
     , mixerView(projectData)
-    , playlistView(projectData)
+    , playlistView(projectData, playheadState)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -38,7 +39,7 @@ UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData)
     addAndMakeVisible (menuBarComponent);
     addAndMakeVisible (footer);
     addAndMakeVisible (mixerView);   
-    addAndMakeVisible (playlistView);   
+    addAndMakeVisible (playlistView);
 }
 
 UserInterfaceManager::~UserInterfaceManager()
@@ -50,31 +51,47 @@ UserInterfaceManager::~UserInterfaceManager()
 
 void UserInterfaceManager::valueChanged(juce::Value& value)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
 
-    switch (signal)
+    if (value == SignalManagerUI::getInstance()->getValue())
     {
-    case SignalManagerUI::Signal::REBUILD_UI:
-        rebuildUI();
-        break;
-    default:
-        break;
+        auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
+
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::RESIZED_TRIGGER:
+            repaint();
+            resized();
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
+            break;
+        case SignalManagerUI::Signal::REBUILD_UI:
+            rebuildUI();
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
+            break;
+        case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+            break;
+        default:
+            break;
+        }
     }
-
-    auto state = RoutingActionStateManager::getInstance()->getCurrentState();
-    switch (state)
+    else if (value == RoutingActionStateManager::getInstance()->getValue())
     {
-    case RoutingActionStateManager::RoutingState::ROUTING_ON:
-        invokeRoutingOverlay();
-        break;
-    case RoutingActionStateManager::RoutingState::ROUTING_OFF:
-        removeRoutingOverlay();
-        break;
-    case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
-        invokeRoutingOverlay();
-        break;
-    default:
-        break;
+		auto state = RoutingActionStateManager::getInstance()->getCurrentState();
+
+		switch (state)
+		{
+		case RoutingActionStateManager::RoutingState::ROUTING_ON:
+			invokeRoutingOverlay();
+			break;
+		case RoutingActionStateManager::RoutingState::ROUTING_OFF:
+			removeRoutingOverlay();
+			break;
+		case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
+			invokeRoutingOverlay();
+			break;
+		default:
+			break;
+		}
     }
 }
 
@@ -111,6 +128,10 @@ void UserInterfaceManager::resized()
     // This method is where you should set the bounds of any child
     // components that your component contains..
 
+	// Used to resize the components when the parent resized is needed
+    mixerView.setBounds (0, 0, 0, 0);
+    playlistView.setBounds (0, 0, 0, 0);
+
     auto area = getLocalBounds();
     
     auto displayBounds = DisplaySingleton::getInstance()->getMainDisplayBounds();
@@ -124,19 +145,15 @@ void UserInterfaceManager::resized()
     if (selectedView == 0)
     {
         mixerView.setBounds (area);
-        playlistView.setBounds (0, 0, 0, 0);
     }
     else if (selectedView == 1)
     {
-        mixerView.setBounds (0,0,0,0); //Check si es mas costoso con el tiempo minimizar los componentes o reconstruirlos
         playlistView.setBounds (area);
 
         DBG("Playlist View on Display");
     }
     else if (selectedView == 2)
     {
-        mixerView.setBounds (0, 0, 0, 0);
-        playlistView.setBounds (0, 0, 0, 0);
 
         DBG("Listening Room View on Display");
     }

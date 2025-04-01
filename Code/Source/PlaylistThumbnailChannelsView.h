@@ -25,7 +25,7 @@
 class PlaylistThumbnailChannelsView  : public juce::Component, public juce::ValueTree::Listener, public juce::Value::Listener
 {
 public:
-    PlaylistThumbnailChannelsView(juce::ValueTree&);
+    PlaylistThumbnailChannelsView(juce::ValueTree&, juce::ValueTree&);
     ~PlaylistThumbnailChannelsView() override;
 
     void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;
@@ -44,6 +44,7 @@ private:
     AudioThumbnailChannelPlaylistUI* getAudioThumbnailChannelPlaylistUI(juce::String);
 
     juce::ValueTree& projectData;
+    juce::ValueTree playheadState;
 
     juce::FlexBox playlistThumbnailsFlexBox;
 

@@ -23,7 +23,7 @@
 class Footer  : public juce::Component
 {
 public:
-    Footer(juce::ValueTree&);
+    Footer(juce::ValueTree&, juce::ValueTree&);
     ~Footer() override;
 
     void paint (juce::Graphics&) override;
@@ -31,7 +31,9 @@ public:
 
 private:
 
-    juce::ValueTree& projectData;
+    juce::ValueTree projectData;
+    juce::ValueTree playheadState;
+
     ViewSelectorColumn viewSelectorColumn;
     PlayerControlGrid playerControlGrid;
     TimeViewer timeViewer;

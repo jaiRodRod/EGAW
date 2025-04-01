@@ -12,42 +12,48 @@
 #include "TimeViewer.h"
 
 //==============================================================================
-TimeViewer::TimeViewer()
+TimeViewer::TimeViewer(juce::ValueTree& playheadState) : playheadState(playheadState)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
+    auto finalString = juce::String::formatted("%02d:%02d.%03d", 0, 0, 0);
+    timeLabel.setText(finalString, juce::NotificationType::dontSendNotification);
     timeLabel.setEditable(false);
     addAndMakeVisible(timeLabel);
 
-    startTimerHz(30);
+    playheadState.addListener(this);
 }
 
 TimeViewer::~TimeViewer()
 {
-    stopTimer();
+    playheadState.removeListener(this);
 }
 
-void TimeViewer::timerCallback()
+void TimeViewer::valueTreePropertyChanged(juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property)
 {
-    const juce::ScopedLock lock(SharedLock_UI_Timers::lock);
+    if (treeWhosePropertyHasChanged == playheadState)
+    {
+        if (property.toString() == "position")
+        {
+            auto blockPosition = (double)playheadState.getProperty("position");
+            auto sampleRate = (double)playheadState.getProperty("sampleRate");
+            juce::RelativeTime time(blockPosition / sampleRate);
 
-    auto blockPosition = GlobalPlayhead::getInstance()->getPlayheadPosition();
-    auto sampleRate = GlobalPlayhead::getInstance()->getSampleRate();
-    juce::RelativeTime time(blockPosition / sampleRate);
+            auto ms = time.inMilliseconds();
+            ms = ms % 1000;
 
-    auto ms = time.inMilliseconds();
-    ms = ms % 1000;
+            auto s = time.inSeconds();
+            s = fmod(s, 60);
+            auto seconds = juce::int64(s);
 
-    auto s = time.inSeconds();
-    s = fmod(s, 60);
-    auto seconds = juce::int64(s);
+            auto m = time.inMinutes();
+            m = fmod(m, 60);
+            auto minutes = juce::int64(m);
 
-    auto m = time.inMinutes();
-    m = fmod(m, 60);
-    auto minutes = juce::int64(m);
-
-    auto finalString = juce::String::formatted("%02d:%02d.%03d", minutes, seconds, ms);
-    timeLabel.setText(finalString, juce::NotificationType::dontSendNotification);
+            auto finalString = juce::String::formatted("%02d:%02d.%03d", minutes, seconds, ms);
+            timeLabel.setText(finalString, juce::NotificationType::dontSendNotification);
+        }
+    }
 }
 
 void TimeViewer::paint (juce::Graphics& g)

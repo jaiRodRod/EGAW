@@ -12,7 +12,6 @@
 
 #include <JuceHeader.h>
 #include "ZoomConstants.h"
-#include "SharedLock_UI_Timers.h"
 
 #include "TransportComponent.h"
 #include "GlobalPlayhead.h"
@@ -20,13 +19,13 @@
 //==============================================================================
 /*
 */
-class TransportBoxComponent  : public juce::Component, public juce::Timer
+class TransportBoxComponent  : public juce::Component, public juce::ValueTree::Listener
 {
 public:
-    TransportBoxComponent(juce::ValueTree&);
+    TransportBoxComponent(juce::ValueTree&, juce::ValueTree&);
     ~TransportBoxComponent() override;
 
-    void timerCallback() override;
+    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;
     void mouseDoubleClick (const juce::MouseEvent& event) override;
     void mouseDrag (const juce::MouseEvent& event) override;
 
@@ -36,6 +35,7 @@ public:
 private:
 
     juce::ValueTree projectData;
+    juce::ValueTree playheadState;
 
     int transportViewPosition;
     TransportComponent transportComponent;

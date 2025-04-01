@@ -12,12 +12,13 @@
 #include "PlaylistThumbnailChannelsView.h"
 
 //==============================================================================
-PlaylistThumbnailChannelsView::PlaylistThumbnailChannelsView(juce::ValueTree& projectData)
+PlaylistThumbnailChannelsView::PlaylistThumbnailChannelsView(juce::ValueTree& projectData, juce::ValueTree& playheadState)
     : playlistThumbnailsFlexBox(juce::FlexBox::Direction::column, juce::FlexBox::Wrap::noWrap
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
     , projectData(projectData)
-    , transportBoxComponent(projectData)
+    , playheadState(playheadState)
+    , transportBoxComponent(projectData, playheadState)
 {
     projectData.addListener(this);
     SignalManagerUI::getInstance()->addListener(this);
@@ -37,7 +38,7 @@ void PlaylistThumbnailChannelsView::valueTreePropertyChanged(juce::ValueTree& tr
     {
         if (property.toString() == "Zoom")
         {
-            resized();
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
     }
 }
@@ -53,7 +54,7 @@ void PlaylistThumbnailChannelsView::valueTreeChildAdded(juce::ValueTree& parentT
             audioThumbnailChannels.add(new AudioThumbnailChannelPlaylistUI(projectData, (childWhichHasBeenAdded.getType()).toString()));
             addAndMakeVisible(audioThumbnailChannels.getLast());
         }
-        resized();
+        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -73,7 +74,7 @@ void PlaylistThumbnailChannelsView::valueTreeChildRemoved(juce::ValueTree& paren
         }
         if (removed)
         {
-            resized();
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
     }
 }
@@ -82,7 +83,7 @@ void PlaylistThumbnailChannelsView::valueTreeChildOrderChanged(juce::ValueTree& 
 {
     if (parentTreeWhoseChildrenHaveMoved == projectData.getChildWithName("channelOrder"))
     {
-        resized();
+        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -94,11 +95,6 @@ void PlaylistThumbnailChannelsView::valueChanged(juce::Value& value)
     {
     case SignalManagerUI::Signal::REBUILD_UI:
         rebuildUI();
-        break;
-    case SignalManagerUI::Signal::RESIZED_TRIGGER:
-        repaint();
-        resized();
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
         break;
     default:
         break;
@@ -141,17 +137,22 @@ void PlaylistThumbnailChannelsView::resized()
             if (type.equals("AudioChannel"))
             {
                 auto* audio = getAudioThumbnailChannelPlaylistUI(channelUuid);
-                //Sustituir el 50 por el Coeficiente de Zoom (50 en este caso es que cada segundo de tiempo ocupa 50px)
-                auto channelThumbnailWidth = (double)projectData.getProperty("Zoom") * audio->getThumbnailTotalLength();
-                audio->setSize(channelThumbnailWidth, channelHeight);
-                playlistThumbnailsFlexBox.items.add(juce::FlexItem(*audio).withMinHeight(channelHeight).withMinWidth(channelThumbnailWidth));
+                if (audio != nullptr)
+                {
+                    //Sustituir el 50 por el Coeficiente de Zoom (50 en este caso es que cada segundo de tiempo ocupa 50px)
+                    auto channelThumbnailWidth = (double)projectData.getProperty("Zoom") * audio->getThumbnailTotalLength();
+                    audio->setSize(channelThumbnailWidth, channelHeight);
+                    playlistThumbnailsFlexBox.items.add(juce::FlexItem(*audio).withMinHeight(channelHeight).withMinWidth(channelThumbnailWidth));
+                }
             }
         }
         ++numPosition;
     }
 
     playlistThumbnailsFlexBox.performLayout(area);
-    repaint();
+    //repaint();
+
+    DBG("ACABA DE FORMARSE EL PlaylistThumbnailsChannelsView");
 
 }
 
@@ -179,16 +180,13 @@ void PlaylistThumbnailChannelsView::rebuildUI()
         }
     }
 
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
-
-    resized();
+    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 }
 
 AudioThumbnailChannelPlaylistUI* PlaylistThumbnailChannelsView::getAudioThumbnailChannelPlaylistUI(juce::String channelUuid)
 {
-    for (int i = 0; i < audioThumbnailChannels.size(); ++i)
+    for (AudioThumbnailChannelPlaylistUI* audio : audioThumbnailChannels)
     {
-        auto* audio = audioThumbnailChannels.getUnchecked(i);
         if (audio->getChannelUuid() == channelUuid)
         {
             return audio;

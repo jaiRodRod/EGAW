@@ -44,7 +44,7 @@ public:
 
     void routingOff();
 
-    JUCE_DECLARE_SINGLETON(RoutingActionStateManager, true);
+    JUCE_DECLARE_SINGLETON(RoutingActionStateManager, false);
 
 private:
 

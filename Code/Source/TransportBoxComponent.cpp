@@ -12,46 +12,59 @@
 #include "TransportBoxComponent.h"
 
 //==============================================================================
-TransportBoxComponent::TransportBoxComponent(juce::ValueTree& projectData) 
+TransportBoxComponent::TransportBoxComponent(juce::ValueTree& projectData, juce::ValueTree& playheadState) 
     : projectData(projectData)
+    , playheadState(playheadState)
     , transportComponent()
 {
     transportViewPosition = 0;
     addAndMakeVisible(transportComponent);
 
-    startTimerHz(30);
+    playheadState.addListener(this);
 }
 
 TransportBoxComponent::~TransportBoxComponent()
 {
-    stopTimer();
+    playheadState.removeListener(this);
 }
 
-void TransportBoxComponent::timerCallback()
+void TransportBoxComponent::valueTreePropertyChanged(juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property)
 {
-    const juce::ScopedLock lock(SharedLock_UI_Timers::lock);
+    if (treeWhosePropertyHasChanged == playheadState)
+    {
+        if (property.toString() == "position")
+        {
+            auto totalTime = (double)playheadState.getProperty("time");
+            auto blockPosition = (double)playheadState.getProperty("position");
+            auto sampleRate = (double)playheadState.getProperty("sampleRate");
+            juce::RelativeTime time(blockPosition / sampleRate);
 
-    auto totalTime = GlobalPlayhead::getInstance()->getTimeLengthSeconds();
-    auto blockPosition = GlobalPlayhead::getInstance()->getPlayheadPosition();
-    auto sampleRate = GlobalPlayhead::getInstance()->getSampleRate();
-    juce::RelativeTime time(blockPosition / sampleRate);
+            transportViewPosition = (double)projectData.getProperty("Zoom") * time.inSeconds();
 
-    transportViewPosition = (double)projectData.getProperty("Zoom") * time.inSeconds();
+            // Check if necessary
+            // SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 
-    resized();
+            //Replaced by this¿?
+            auto transportWidth = 20 + 20; //El tamaño del transport y control de hitbox
+            transportComponent.setBounds(transportViewPosition - (transportWidth / 2), 0, transportWidth, getLocalBounds().getHeight());
+        }
+    }
 }
 
 void TransportBoxComponent::mouseDoubleClick(const juce::MouseEvent& event)
 {
+    /*
     auto clickPoint = event.getMouseDownPosition().getX();
     auto clickPosInSeconds = (double)clickPoint / (double)projectData.getProperty("Zoom");
     auto samplePos = clickPosInSeconds * GlobalPlayhead::getInstance()->getSampleRate();
 
     GlobalPlayhead::getInstance()->setPlayheadPosition(samplePos);
+    */
 }
 
 void TransportBoxComponent::mouseDrag(const juce::MouseEvent& event)
 {
+    /*
     auto dragStartPoint = event.getMouseDownPosition().getX();
     auto dragStartPosInSeconds = (double)dragStartPoint / (double)projectData.getProperty("Zoom");
     auto playheadPos = dragStartPosInSeconds * GlobalPlayhead::getInstance()->getSampleRate();
@@ -63,7 +76,10 @@ void TransportBoxComponent::mouseDrag(const juce::MouseEvent& event)
     auto sampleDistance = distanceInSeconds * GlobalPlayhead::getInstance()->getSampleRate();
 
     GlobalPlayhead::getInstance()->setPlayheadPosition(playheadPos + sampleDistance);
+    */
+
     /*
+    * QUITADO ANTES DEL REFACTORRR
     if (transportComponent.getBounds().contains(dragStartPoint))
     {
         auto draggedDistanceX = event.getDistanceFromDragStartX();

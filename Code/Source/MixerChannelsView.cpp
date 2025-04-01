@@ -51,11 +51,6 @@ void MixerChannelsView::valueChanged(juce::Value& value)
     case SignalManagerUI::Signal::REBUILD_UI:
         rebuildUI();
         break;
-    case SignalManagerUI::Signal::RESIZED_TRIGGER:
-        repaint();
-        resized();
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
-        break;
     default:
         break;
     }
@@ -77,7 +72,7 @@ void MixerChannelsView::valueTreeChildAdded(juce::ValueTree& parentTree, juce::V
             mixBusChannels.add(new MixBusChannelUI(projectData, (childWhichHasBeenAdded.getType()).toString()));
             addAndMakeVisible(mixBusChannels.getLast());
         }
-        resized();
+        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -105,7 +100,7 @@ void MixerChannelsView::valueTreeChildRemoved(juce::ValueTree& parentTree, juce:
         }
         if (removed)
         {
-            resized();
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
     }
 }
@@ -114,7 +109,7 @@ void MixerChannelsView::valueTreeChildOrderChanged(juce::ValueTree& parentTreeWh
 {
     if (parentTreeWhoseChildrenHaveMoved == projectData.getChildWithName("channelOrder"))
     {
-        resized();
+        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -201,10 +196,6 @@ void MixerChannelsView::rebuildUI()
             }
         }
     }
-
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
-
-    resized();
 }
 
 void MixerChannelsView::showMenu()

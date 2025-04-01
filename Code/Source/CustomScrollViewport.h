@@ -13,8 +13,6 @@
 #include <JuceHeader.h>
 
 //==============================================================================
-/*
-*/
 class CustomScrollViewport  : public juce::Viewport
 {
 public:

@@ -10,16 +10,19 @@
 
 #include "AudioSystemBus.h"
 
-AudioSystemBus::AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup& audioDeviceSetupToAttach, juce::ValueTree& projectData, juce::ValueTree& fileRestoreProjectData)
+AudioSystemBus::AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup& audioDeviceSetupToAttach
+    , juce::ValueTree& projectData, juce::ValueTree& fileRestoreProjectData, GlobalPlayhead& globalPlayhead)
     : channelOrder("channelOrder")
     , audioDeviceSetup(audioDeviceSetupToAttach)
     , transportSource()
     , masterBusChannel(juce::Uuid("MasterBusChannel").toString(), juce::ValueTree(juce::Uuid("MasterBusChannel").toString()))
     , projectData(projectData)
     , fileRestoreProjectData(fileRestoreProjectData)
+    , globalPlayhead(globalPlayhead)
 {
+
     playing = false;
-    projectData.setProperty("bpm", "90.00", nullptr);
+    globalPlayhead.getState().setProperty("isPlaying", false, nullptr);
 
     SignalManagerUI::getInstance()->addListener(this);
     RoutingActionStateManager::getInstance()->addListener(this);
@@ -44,7 +47,13 @@ AudioSystemBus::~AudioSystemBus()
     SignalManagerUI::getInstance()->removeListener(this);
     RoutingActionStateManager::getInstance()->removeListener(this);
     projectData.removeListener(this);
-    releaseResources();
+    
+    tempAudioChannel = nullptr;
+    delete tempAudioChannel;
+
+    tempMixBusChannel = nullptr;
+	delete tempMixBusChannel;
+
     //delete audioDeviceSetup;
 }
 
@@ -56,35 +65,38 @@ void AudioSystemBus::valueChanged(juce::Value& value)
 
         switch (signal)
         {
-        case SignalManagerUI::Signal::RESTORE_PROJECT_DATA:
-            restoreProjectData();
-            break;
-        case SignalManagerUI::Signal::PLAY_AUDIO:
-            playing = true;
-            transportSource.start();
-            break;
-        case SignalManagerUI::Signal::PAUSE_AUDIO:
-            playing = false;
-            transportSource.stop();
-            break;
-        case SignalManagerUI::Signal::STOP_AUDIO:
-            playing = false;
-            transportSource.stop();
-            setTransportToBegin();
-            prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
-            break;
-        case SignalManagerUI::Signal::ADD_AUDIO_CHANNEL:
-            addAudioChannel();
-            break;
-        case SignalManagerUI::Signal::DO_ADD_AUDIO_CHANNEL:
-            doAddAudioChannel();
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
-            break;
-        case SignalManagerUI::Signal::ADD_MIX_BUS_CHANNEL:
-            addMixBusChannel();
-            break;
-        default:
-            break;
+            case SignalManagerUI::Signal::RESTORE_PROJECT_DATA:
+                restoreProjectData();
+                break;
+            case SignalManagerUI::Signal::PLAY_AUDIO:
+                playing = true;
+                globalPlayhead.setIsPlaying(playing);
+                transportSource.start();
+                break;
+            case SignalManagerUI::Signal::PAUSE_AUDIO:
+                playing = false;
+                globalPlayhead.setIsPlaying(playing);
+                transportSource.stop();
+                break;
+            case SignalManagerUI::Signal::STOP_AUDIO:
+                playing = false;
+                globalPlayhead.setIsPlaying(playing);
+                transportSource.stop();
+                setTransportToBegin();
+                prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
+                break;
+            case SignalManagerUI::Signal::ADD_AUDIO_CHANNEL:
+                addAudioChannel();
+                break;
+            case SignalManagerUI::Signal::DO_ADD_AUDIO_CHANNEL:
+                doAddAudioChannel();
+                SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+                break;
+            case SignalManagerUI::Signal::ADD_MIX_BUS_CHANNEL:
+                addMixBusChannel();
+                break;
+            default:
+                break;
         }
     }
     else if (value == RoutingActionStateManager::getInstance()->getValue())
@@ -93,19 +105,19 @@ void AudioSystemBus::valueChanged(juce::Value& value)
 
         switch (state)
         {
-        case RoutingActionStateManager::RoutingState::COMPLETED_ROUTING:
-            doRouting();
-            RoutingActionStateManager::getInstance()->setOriginChannelUuid(juce::String());
-            RoutingActionStateManager::getInstance()->setDestinyChannelUuid(juce::String());
-            RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
-            break;
-        case RoutingActionStateManager::RoutingState::COMPLETED_REMOVING_ROUTE:
-            doRemoveRoute();
-            RoutingActionStateManager::getInstance()->setOriginChannelUuid(juce::String());
-            RoutingActionStateManager::getInstance()->setDestinyChannelUuid(juce::String());
-            RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
-        default:
-            break;
+            case RoutingActionStateManager::RoutingState::COMPLETED_ROUTING:
+                doRouting();
+                RoutingActionStateManager::getInstance()->setOriginChannelUuid(juce::String());
+                RoutingActionStateManager::getInstance()->setDestinyChannelUuid(juce::String());
+                RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
+                break;
+            case RoutingActionStateManager::RoutingState::COMPLETED_REMOVING_ROUTE:
+                doRemoveRoute();
+                RoutingActionStateManager::getInstance()->setOriginChannelUuid(juce::String());
+                RoutingActionStateManager::getInstance()->setDestinyChannelUuid(juce::String());
+                RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
+            default:
+                break;
         }
     }
 }
@@ -135,7 +147,7 @@ void AudioSystemBus::prepareToPlay(int samplesPerBlockExpected, double sampleRat
     DBG("PREPARE TO PLAY buffer size = " << audioDeviceSetup.bufferSize);
     DBG("PREPARE TO PLAY sample rate = " << audioDeviceSetup.sampleRate);
 
-    GlobalPlayhead::getInstance()->setSampleRate(sampleRate);
+    //GlobalPlayhead::getInstance()->setSampleRate(sampleRate);
 
     transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 
@@ -164,13 +176,13 @@ void AudioSystemBus::getNextAudioBlock(const juce::AudioSourceChannelInfo& buffe
     transportSource.getNextAudioBlock(bufferToFill);
 
     if(playing)
-        GlobalPlayhead::getInstance()->add_numSamples(bufferToFill.numSamples);
+        globalPlayhead.add_numSamples(bufferToFill.numSamples);
     //globalPlayhead += bufferToFill.numSamples;
 }
 
 void AudioSystemBus::setNextReadPosition(juce::int64 newPosition)
 {
-    GlobalPlayhead::getInstance()->setPlayheadPosition(newPosition);
+    globalPlayhead.setPlayheadPosition(newPosition);
     //globalPlayhead.store(newPosition);
     transportSource.setNextReadPosition(newPosition);
 }
@@ -206,7 +218,7 @@ void AudioSystemBus::addMixBusChannel()
 
     prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
 
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
+    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 }
 
 void AudioSystemBus::removeMixBusChannel(MixBusChannel* mixBusChannelToRemove, juce::ValueTree channelsRoutedTo)
@@ -265,7 +277,7 @@ juce::Array<MixBusChannel*> AudioSystemBus::getMixBusChannels()
 void AudioSystemBus::addAudioChannel()
 {
     //El procedimiento de hacer un new y despues unirlo al audioChannels puede traer fugas de memoria e inconsistencias
-    tempAudioChannel = new AudioChannel();
+    tempAudioChannel = new AudioChannel(globalPlayhead);
 }
 
 void AudioSystemBus::doAddAudioChannel()
@@ -274,7 +286,7 @@ void AudioSystemBus::doAddAudioChannel()
     tempAudioChannel->setMixerPosition(channelOrder.getNumChildren());
     tempAudioChannel->routeTo(&masterBusChannel, true);
 
-    GlobalPlayhead::getInstance()->contestForTimeLength(tempAudioChannel->getTotalLength());
+    globalPlayhead.contestForTimeLength(tempAudioChannel->getTotalLength());
 
     channelOrder.appendChild(juce::ValueTree(tempAudioChannel->getInternalChannelId()), nullptr);
     projectData.appendChild(tempAudioChannel->getValueTree(), nullptr);
@@ -367,6 +379,7 @@ juce::int64 AudioSystemBus::getTotalSamples()
 void AudioSystemBus::setAudioDeviceSetup(juce::AudioDeviceManager::AudioDeviceSetup newAudioDeviceSetup)
 {
     audioDeviceSetup = newAudioDeviceSetup;
+    prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
 }
 
 void AudioSystemBus::processNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
@@ -377,7 +390,7 @@ void AudioSystemBus::processNextAudioBlock(const juce::AudioSourceChannelInfo& b
     bufferToFill.clearActiveBufferRegion();
     masterBusChannel.getNextAudioBlock(bufferToFill);
 
-    GlobalPlayhead::getInstance()->add_numSamples(bufferToFill.numSamples);
+    globalPlayhead.add_numSamples(bufferToFill.numSamples);
     //globalPlayhead += bufferToFill.numSamples;
 }
 
@@ -389,7 +402,7 @@ void AudioSystemBus::start()
 void AudioSystemBus::setTransportToBegin()
 {
     transportSource.setPosition(0);
-    GlobalPlayhead::getInstance()->setPlayheadPosition(0);
+    globalPlayhead.setPlayheadPosition(0);
     //globalPlayhead.store(0);
 }
 
@@ -436,7 +449,7 @@ void AudioSystemBus::restoreProjectData()
             }
             else if (channelType == "AudioChannel")
             {
-                audioChannels.add(new AudioChannel(uuid, channelData));
+                audioChannels.add(new AudioChannel(globalPlayhead, uuid, channelData));
                 audioChannels.getLast()->setMixerPosition(i);
                 channelOrder.appendChild(juce::ValueTree(audioChannels.getLast()->getInternalChannelId()), nullptr);
                 projectData.appendChild(audioChannels.getLast()->getValueTree(), nullptr);

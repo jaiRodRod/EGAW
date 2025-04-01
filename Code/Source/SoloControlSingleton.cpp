@@ -12,9 +12,8 @@
 
 JUCE_IMPLEMENT_SINGLETON(SoloControlSingleton);
 
-SoloControlSingleton::SoloControlSingleton()
+SoloControlSingleton::SoloControlSingleton() : soloSignal(juce::var(static_cast<int>(SoloSignal::NULL_SIGNAL)))
 {
-    soloSignal = static_cast<int>(SoloSignal::NULL_SIGNAL);
     isGlobalSoloActive = false;
     numSoloChannels = 0;
 }

@@ -12,7 +12,6 @@
 
 #include <JuceHeader.h>
 #include "ZoomConstants.h"
-#include "SharedLock_UI_Timers.h"
 
 #include "AudioChannelPlaylistUI.h"
 #include "SignalManagerUI.h"
@@ -23,10 +22,10 @@
 //==============================================================================
 /*
 */
-class PlaylistChannelsView  : public juce::Component, public juce::ValueTree::Listener, public juce::Value::Listener, public juce::Timer
+class PlaylistChannelsView  : public juce::Component, public juce::ValueTree::Listener, public juce::Value::Listener
 {
 public:
-    PlaylistChannelsView(juce::ValueTree&, juce::Viewport&);
+    PlaylistChannelsView(juce::ValueTree&, juce::ValueTree&, juce::Viewport&);
     ~PlaylistChannelsView() override;
 
     void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;
@@ -34,7 +33,6 @@ public:
     void valueTreeChildRemoved (juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved) override;
     void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved, int oldIndex, int newIndex) override;
     void valueChanged(juce::Value& value) override;
-    void timerCallback() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -49,8 +47,11 @@ private:
     int getNumAudioChannels();
 
     juce::ValueTree projectData;
+    juce::ValueTree playheadState;
+
 
     juce::FlexBox playlistFlexBox;
+    
     juce::OwnedArray<AudioChannelPlaylistUI> audioChannels;
 
     juce::Component separator;

@@ -12,17 +12,19 @@
 #include "PlaylistChannelsView.h"
 
 //==============================================================================
-PlaylistChannelsView::PlaylistChannelsView(juce::ValueTree& projectData, juce::Viewport& verticalViewport)
-    : playlistFlexBox(juce::FlexBox::Direction::column, juce::FlexBox::Wrap::noWrap
+PlaylistChannelsView::PlaylistChannelsView(juce::ValueTree& projectData, juce::ValueTree& playheadState, juce::Viewport& verticalViewport)
+    : projectData(projectData)
+    , playheadState(playheadState)
+    , playlistFlexBox(juce::FlexBox::Direction::column, juce::FlexBox::Wrap::noWrap
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
-    , projectData(projectData)
     , separator()
-    , playlistThumbnailChannelsView(projectData)
+    , playlistThumbnailChannelsView(projectData, playheadState)
     , horizontalViewport(verticalViewport)
     , transportViewPosition(0)
 {
     projectData.addListener(this);
+    playheadState.addListener(this);
     SignalManagerUI::getInstance()->addListener(this);
 
     addAndMakeVisible(separator);
@@ -32,18 +34,15 @@ PlaylistChannelsView::PlaylistChannelsView(juce::ValueTree& projectData, juce::V
     horizontalViewport.setViewedComponent(&playlistThumbnailChannelsView);
     addAndMakeVisible(horizontalViewport);
 
-
     addChannel.setButtonText("Add new Audio Channel");
     addChannel.onClick = [this] {doAddAudioChannel();};
     addAndMakeVisible(addChannel);
-
-    startTimerHz(30);
 }
 
 PlaylistChannelsView::~PlaylistChannelsView()
 {
-    stopTimer();
     projectData.removeListener(this);
+    playheadState.removeListener(this);
     SignalManagerUI::getInstance()->removeListener(this);
 }
 
@@ -53,7 +52,32 @@ void PlaylistChannelsView::valueTreePropertyChanged(juce::ValueTree& treeWhosePr
     {
         if (property.toString() == "Zoom")
         {
-            resized();
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+        }
+    }
+    else if (treeWhosePropertyHasChanged == playheadState)
+    {
+        if (property.toString() == "position")
+        {
+            auto totalTime = (double)playheadState.getProperty("time");
+            auto blockPosition = (double)playheadState.getProperty("position");
+            auto sampleRate = (double)playheadState.getProperty("sampleRate");
+            auto isPlaying = (bool)playheadState.getProperty("isPlaying");
+            juce::RelativeTime time(blockPosition / sampleRate);
+
+            transportViewPosition = (double)projectData.getProperty("Zoom") * time.inSeconds();
+
+            if (horizontalViewport.getViewArea().getWidth() != 0 && isPlaying)
+            {
+                auto positionX = (transportViewPosition / horizontalViewport.getViewArea().getWidth()) * horizontalViewport.getViewArea().getWidth();
+                transportViewPosition = transportViewPosition % horizontalViewport.getViewArea().getWidth();
+                if (transportViewPosition <= 5)
+                {
+                    horizontalViewport.setViewPosition(positionX, 0);
+                }
+            }
+
+            //DBG("Transport view position: " << transportViewPosition);
         }
     }
 }
@@ -69,7 +93,7 @@ void PlaylistChannelsView::valueTreeChildAdded(juce::ValueTree& parentTree, juce
             audioChannels.add(new AudioChannelPlaylistUI(projectData, (childWhichHasBeenAdded.getType()).toString()));
             addAndMakeVisible(audioChannels.getLast());
         }
-        resized();
+        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -89,7 +113,7 @@ void PlaylistChannelsView::valueTreeChildRemoved(juce::ValueTree& parentTree, ju
         }
         if (removed)
         {
-            resized();
+            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
     }
 }
@@ -98,7 +122,7 @@ void PlaylistChannelsView::valueTreeChildOrderChanged(juce::ValueTree& parentTre
 {
     if (parentTreeWhoseChildrenHaveMoved == projectData.getChildWithName("channelOrder"))
     {
-        resized();
+        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -111,41 +135,9 @@ void PlaylistChannelsView::valueChanged(juce::Value& value)
     case SignalManagerUI::Signal::REBUILD_UI:
         rebuildUI();
         break;
-    case SignalManagerUI::Signal::RESIZED_TRIGGER:
-        repaint();
-        resized();
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
-        break;
     default:
         break;
     }
-}
-
-void PlaylistChannelsView::timerCallback()
-{
-    const juce::ScopedLock lock(SharedLock_UI_Timers::lock);
-
-    auto totalTime = GlobalPlayhead::getInstance()->getTimeLengthSeconds();
-    auto blockPosition = GlobalPlayhead::getInstance()->getPlayheadPosition();
-    auto sampleRate = GlobalPlayhead::getInstance()->getSampleRate();
-    juce::RelativeTime time(blockPosition / sampleRate);
-
-    transportViewPosition = (double)projectData.getProperty("Zoom") * time.inSeconds();
-
-    if (horizontalViewport.getViewArea().getWidth() != 0 && transportViewPosition != 0)
-    {
-        auto positionX = (transportViewPosition / horizontalViewport.getViewArea().getWidth()) * horizontalViewport.getViewArea().getWidth();
-        transportViewPosition = transportViewPosition % horizontalViewport.getViewArea().getWidth();
-        if (transportViewPosition <= 5)
-        {
-            horizontalViewport.setViewPosition(positionX, 0);
-        }
-    }
-
-    DBG("Transport view position: " << transportViewPosition);
-    //bool scrolling = horizontalViewport.autoScroll(transportViewPosition, getLocalBounds().getHeight() / 2, 100, 1000);
-    //int isScrolling = scrolling ? 1 : 0;
-    //DBG("Is scrolling: " << isScrolling);
 }
 
 void PlaylistChannelsView::paint (juce::Graphics& g)
@@ -183,8 +175,11 @@ void PlaylistChannelsView::resized()
             if (type.equals("AudioChannel"))
             {
                 auto* audio = getAudioChannelPlaylistUI(channelUuid);
-                audio->setSize(area.getWidth(), channelHeight);
-                playlistFlexBox.items.add(juce::FlexItem(*audio).withMinHeight(channelHeight).withMinWidth(channelInfoWidth));
+                if (audio != nullptr)
+                {
+                    audio->setSize(area.getWidth(), channelHeight);
+                    playlistFlexBox.items.add(juce::FlexItem(*audio).withMinHeight(channelHeight).withMinWidth(channelInfoWidth));
+                }
             }
         }
         ++numPosition;
@@ -194,14 +189,16 @@ void PlaylistChannelsView::resized()
 
     playlistFlexBox.performLayout(area.removeFromLeft(channelInfoWidth));
 
-    separator.setBounds(area.removeFromLeft(5));
+    if (area.getWidth() > 5)
+    {
+        separator.setBounds(area.removeFromLeft(5));
+    }
 
     //Hacemos el mismo procedimiento para los thumnails
     horizontalViewport.setBounds(area);
     //Sustituir el 50 por el Coeficiente de Zoom (50 en este caso es que cada segundo de tiempo ocupa 50px)
-    auto thumbnailLengthWidth = (double)projectData.getProperty("Zoom") * GlobalPlayhead::getInstance()->getTimeLengthSeconds();
+    auto thumbnailLengthWidth = (double)projectData.getProperty("Zoom") * (double)playheadState.getProperty("time");
     playlistThumbnailChannelsView.setSize(thumbnailLengthWidth, channelHeight * getNumAudioChannels() + (displayBounds.getHeight() / 36)); //Check
-
 }
 
 void PlaylistChannelsView::rebuildUI()
@@ -228,9 +225,7 @@ void PlaylistChannelsView::rebuildUI()
         }
     }
 
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
-
-    resized();
+    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 }
 
 void PlaylistChannelsView::doAddAudioChannel()
@@ -240,9 +235,8 @@ void PlaylistChannelsView::doAddAudioChannel()
 
 AudioChannelPlaylistUI* PlaylistChannelsView::getAudioChannelPlaylistUI(juce::String channelUuid)
 {
-    for (int i = 0; i < audioChannels.size(); ++i)
+    for (AudioChannelPlaylistUI* audio : audioChannels)
     {
-        auto* audio = audioChannels.getUnchecked(i);
         if (audio->getChannelUuid() == channelUuid)
         {
             return audio;

@@ -20,8 +20,8 @@ class AudioChannel : public Channel, public juce::ValueTree::Listener, public ju
 {
 public:
 
-    AudioChannel();
-    AudioChannel(juce::String&, juce::ValueTree&); //Constructor para reconstruir con los parametros cuando se reconstruya la serializacion
+    AudioChannel(GlobalPlayhead&);
+    AudioChannel(GlobalPlayhead&, juce::String&, juce::ValueTree&); //Constructor para reconstruir con los parametros cuando se reconstruya la serializacion
     ~AudioChannel();
 
     void loadFile();
@@ -63,6 +63,8 @@ private:
     void setMute(bool muteValue); //Hacerlo undoable
     void setSolo(bool soloValue); //Hacerlo undoable
     void setSoloMute();
+
+    GlobalPlayhead& globalPlayhead;
 
     std::atomic<juce::int64> startSample{ 0 };
     std::atomic<bool> isActive{ false };

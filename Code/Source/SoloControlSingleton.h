@@ -30,7 +30,7 @@ public:
     bool checkIsGlobalSoloActive() { return isGlobalSoloActive; };
     void resetSingleton();
 
-    JUCE_DECLARE_SINGLETON(SoloControlSingleton, true);
+    JUCE_DECLARE_SINGLETON(SoloControlSingleton, false);
 
 
 private:

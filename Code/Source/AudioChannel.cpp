@@ -10,7 +10,7 @@
 
 #include "AudioChannel.h"
 
-AudioChannel::AudioChannel() : settings(Channel::getInternalChannelId())
+AudioChannel::AudioChannel(GlobalPlayhead& globalPlayhead) : globalPlayhead(globalPlayhead), settings(Channel::getInternalChannelId())
 {
     gain.setGainDecibels(0.0f);
     panValue = 0.0f;
@@ -35,8 +35,8 @@ AudioChannel::AudioChannel() : settings(Channel::getInternalChannelId())
     loadFile();
 }
 
-AudioChannel::AudioChannel(juce::String& optionalInternalChannelId, juce::ValueTree& restorerValueTree) 
-    : settings(optionalInternalChannelId), Channel(optionalInternalChannelId), currentFile(restorerValueTree.getProperty("FilePath"))
+AudioChannel::AudioChannel(GlobalPlayhead& globalPlayhead, juce::String& optionalInternalChannelId, juce::ValueTree& restorerValueTree) 
+    : globalPlayhead(globalPlayhead), settings(optionalInternalChannelId), Channel(optionalInternalChannelId), currentFile(restorerValueTree.getProperty("FilePath"))
 {
     gain.setGainDecibels((float) restorerValueTree.getProperty("Gain"));
     panValue = (float) restorerValueTree.getProperty("Pan");
@@ -140,7 +140,7 @@ bool AudioChannel::loadFileInternal(const juce::File& audioFile)
 //Funciones para que herede correctamente de AudioSource
 void AudioChannel::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
 {
-    if (readerSource)
+    if (resampler)
     {
         this->sampleRate = sampleRate;
         //readerSource->prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -154,12 +154,16 @@ void AudioChannel::releaseResources()
 {
     if (readerSource)
         readerSource->releaseResources();
+
+    if (resampler)
+        resampler->releaseResources();
+
     isPrepared = false;
 }
 
 void AudioChannel::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
-    const juce::int64 globalPosition = GlobalPlayhead::getInstance()->getPlayheadPosition();
+    const juce::int64 globalPosition = globalPlayhead.getPlayheadPosition();
 
     if (isPrepared && readerSource && globalPosition >= startSample.load())
     {

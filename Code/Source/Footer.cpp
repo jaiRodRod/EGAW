@@ -12,13 +12,15 @@
 #include "Footer.h"
 
 //==============================================================================
-Footer::Footer(juce::ValueTree& projectData) 
+Footer::Footer(juce::ValueTree& projectData, juce::ValueTree& playheadState) 
     : flexBox(juce::FlexBox::Direction::row, juce::FlexBox::Wrap::noWrap
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
     , projectData(projectData)
+    , playheadState(playheadState)
     , viewSelectorColumn(projectData)
-    , playerControlGrid(projectData)
+    , playerControlGrid(projectData, playheadState)
+    , timeViewer(playheadState)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.

@@ -44,7 +44,7 @@ public:
 
     juce::Value getValue() { return signalValue; };
 
-    JUCE_DECLARE_SINGLETON(SignalManagerUI, true);
+    JUCE_DECLARE_SINGLETON(SignalManagerUI, false);
 
 private:
 

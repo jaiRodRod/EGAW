@@ -12,9 +12,9 @@
 #include "PlayerControlGrid.h"
 
 //==============================================================================
-PlayerControlGrid::PlayerControlGrid(juce::ValueTree& projectData) : projectData(projectData), bpmEditor(projectData)
+PlayerControlGrid::PlayerControlGrid(juce::ValueTree& projectData, juce::ValueTree& playheadState) : projectData(projectData), playheadState(playheadState), bpmEditor(projectData)
 {
-    SignalManagerUI::getInstance()->addListener(this);
+    playheadState.addListener(this);
 
     playing = false;
 
@@ -32,29 +32,26 @@ PlayerControlGrid::PlayerControlGrid(juce::ValueTree& projectData) : projectData
 
 PlayerControlGrid::~PlayerControlGrid()
 {
-
+    playheadState.removeListener(this);
 }
 
-void PlayerControlGrid::valueChanged(juce::Value& value)
+void PlayerControlGrid::valueTreePropertyChanged(juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
-
-    switch (signal)
+    if (treeWhosePropertyHasChanged == playheadState)
     {
-    case SignalManagerUI::Signal::PLAY_AUDIO:
-        setPlaying(true);
-        playButton.setButtonText("Pause");
-        break;
-    case SignalManagerUI::Signal::PAUSE_AUDIO:
-        setPlaying(false);
-        playButton.setButtonText("Play");
-        break;
-    case SignalManagerUI::Signal::STOP_AUDIO:
-        setPlaying(false);
-        playButton.setButtonText("Play");
-        break;
-    default:
-        break;
+        if (property.toString() == "isPlaying")
+        {
+            if ((bool)playheadState.getProperty("isPlaying") == true)
+            {
+                setPlaying(true);
+                playButton.setButtonText("Pause");
+            }
+            else
+            {
+                setPlaying(false);
+                playButton.setButtonText("Play");
+            }
+        }
     }
 }
 

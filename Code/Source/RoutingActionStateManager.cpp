@@ -12,9 +12,9 @@
 
 JUCE_IMPLEMENT_SINGLETON(RoutingActionStateManager);
 
-RoutingActionStateManager::RoutingActionStateManager()
+RoutingActionStateManager::RoutingActionStateManager() : state(juce::var(static_cast<int>(RoutingState::ROUTING_OFF)))
 {
-    state = static_cast<int>(RoutingState::ROUTING_OFF);
+
 }
 
 RoutingActionStateManager::RoutingState RoutingActionStateManager::getCurrentState() const

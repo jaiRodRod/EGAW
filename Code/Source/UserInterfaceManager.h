@@ -29,7 +29,7 @@
 class UserInterfaceManager  : public juce::Component, public juce::Value::Listener, public juce::ValueTree::Listener
 {
 public:
-    UserInterfaceManager(juce::ValueTree&);
+    UserInterfaceManager(juce::ValueTree&, juce::ValueTree&);
     ~UserInterfaceManager() override;
 
     void valueChanged(juce::Value& value) override;
@@ -46,6 +46,8 @@ private:
     void removeRoutingOverlay();
 
     juce::ValueTree projectData;
+    juce::ValueTree playheadState;
+
     EgawMenuBarModel menuBarModel;
     juce::MenuBarComponent menuBarComponent;
     Footer footer;

@@ -23,7 +23,7 @@ class AudioSystemBus : public juce::PositionableAudioSource, public juce::Value:
 
 public:
 
-    AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup&, juce::ValueTree&, juce::ValueTree&);
+    AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup&, juce::ValueTree&, juce::ValueTree&, GlobalPlayhead&);
     ~AudioSystemBus();
 
     /// <summary>
@@ -106,4 +106,5 @@ private:
     MixBusChannel* tempMixBusChannel = nullptr;
 
     juce::AudioDeviceManager::AudioDeviceSetup audioDeviceSetup;
+    GlobalPlayhead& globalPlayhead;
 };

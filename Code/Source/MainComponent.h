@@ -41,30 +41,18 @@ public:
 
 private:
 
-    /*
-    juce::TextButton loadButton;
-    juce::TextButton playButton;
-    juce::TextButton stopButton;
-    juce::TextButton saveButton;
-    juce::TextButton loadFileButton;
-    void loadButtonClicked();
-    void saveButtonClicked();
-    void loadFileButtonClicked();
-    void playButtonClicked();
-    void stopButtonClicked();
-    */
-
     juce::ValueTree fileRestoreProjectData;
     juce::ValueTree projectData;
+    GlobalPlayhead globalPlayhead;
+
     AudioSystemBus audioSystemBus;
     UserInterfaceManager userInterfaceManager;
     ProjectFileManager projectFileManager;
 
 
+
     //Para la exportacion de audio
     juce::AudioFormatManager formatManager;
-    //juce::AudioTransportSource audioSource;
-    //std::vector
 
     std::unique_ptr<juce::FileChooser> fileChooser;
 

@@ -20,7 +20,7 @@ public:
     juce::Rectangle<int> getMainDisplayBounds();
     juce::Rectangle<int> getDisplayBounds(juce::Displays::Display);
 
-    JUCE_DECLARE_SINGLETON(DisplaySingleton, true);
+    JUCE_DECLARE_SINGLETON(DisplaySingleton, false);
 
 private:
 

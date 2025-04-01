@@ -17,7 +17,7 @@ AudioThumbnailChannelPlaylistUI::AudioThumbnailChannelPlaylistUI(juce::ValueTree
     , channelUuid(channelUuid)
     , formatManager() // Initialize the formatManager
     , thumbnailCache(5) // Cache size
-    , thumbnail(512, formatManager, thumbnailCache) // Pass formatManager to the thumbnail
+    , thumbnail(480, formatManager, thumbnailCache) // Pass formatManager to the thumbnail
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.

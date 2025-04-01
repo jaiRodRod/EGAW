@@ -10,32 +10,83 @@
 
 #include "GlobalPlayhead.h"
 
-JUCE_IMPLEMENT_SINGLETON(GlobalPlayhead);
+//JUCE_IMPLEMENT_SINGLETON(GlobalPlayhead);
 
-GlobalPlayhead::GlobalPlayhead() : time(300), realAudioTime(0)
+GlobalPlayhead::GlobalPlayhead() : playheadState("GlobalPlayhead")
 {
-    sampleRate = 48000;
+    playheadState.setProperty("time", 300, nullptr);
+    playheadState.setProperty("realAudioTime", 0, nullptr);
+    playheadState.setProperty("position", 0, nullptr);
+    playheadState.setProperty("isPlaying", false, nullptr);
+    playheadState.setProperty("sampleRate", getSampleRate(), nullptr);
     startTimerHz(30);
 }
 
 void GlobalPlayhead::timerCallback()
 {
-    const juce::ScopedLock lock(SharedLock_UI_Timers::lock);
-
     auto actualTime = juce::RelativeTime(((double)getPlayheadPosition()) / sampleRate);
-    if (actualTime.inSeconds() >= getTimeLengthSeconds())
+    if (actualTime.inSeconds() >= (double)playheadState.getProperty("time"))
     {
         SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::STOP_AUDIO);
     }
+}
+
+void GlobalPlayhead::add_numSamples(int numSamples)
+{
+    globalPlayhead.fetch_add(numSamples);
+
+    juce::MessageManager::callAsync([this] {
+        playheadState.setProperty("position", getPlayheadPosition(), nullptr);
+    });
+}
+
+juce::int64 GlobalPlayhead::getPlayheadPosition() const
+{
+    return globalPlayhead.load();
+}
+
+void GlobalPlayhead::setPlayheadPosition(juce::int64 newPosition)
+{
+    globalPlayhead.store(newPosition, std::memory_order_release);
+
+    // Update ValueTree (asynchronously, GUI thread safe)
+    juce::MessageManager::callAsync([this, newPosition] {
+        playheadState.setProperty("position", newPosition, nullptr);
+    });
+}
+
+double GlobalPlayhead::getSampleRate() const
+{
+    return sampleRate.load();
+}
+
+void GlobalPlayhead::setSampleRate(double newSampleRate)
+{
+    sampleRate.store(newSampleRate, std::memory_order_release);
+
+    juce::MessageManager::callAsync([this, newSampleRate] {
+        playheadState.setProperty("sampleRate", newSampleRate, nullptr);
+    });
+
+    DBG("SAMPLE RATE SET: " << newSampleRate);
 }
 
 void GlobalPlayhead::contestForTimeLength(juce::int64 numSamples)
 {
     auto contestantTime = juce::RelativeTime( ((double) numSamples) / sampleRate);
 
-    if (contestantTime.inSeconds() > realAudioTime.inSeconds())
+    if (contestantTime.inSeconds() > (double)playheadState.getProperty("realAudioTime"))
     {
-        realAudioTime = (realAudioTime.seconds(contestantTime.inSeconds()));
-        time = (time.seconds(contestantTime.inSeconds() + 300)); // 5 minutos de margen
+        juce::MessageManager::callAsync([this, contestantTime] {
+            playheadState.setProperty("realAudioTime", contestantTime.inSeconds(), nullptr);
+            playheadState.setProperty("time", contestantTime.inSeconds() + 300, nullptr); // 5 minutos de margen
+        });
     }
+}
+
+void GlobalPlayhead::setIsPlaying(bool isPlaying)
+{
+    juce::MessageManager::callAsync([this, isPlaying] {
+        playheadState.setProperty("isPlaying", isPlaying, nullptr);
+    });
 }

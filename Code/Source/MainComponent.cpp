@@ -6,8 +6,9 @@
 MainComponent::MainComponent() 
     : projectData("AudioSystemBus")
     , fileRestoreProjectData("RestorerValueTree")
-    , audioSystemBus(deviceManager.getAudioDeviceSetup(), projectData, fileRestoreProjectData)
-    , userInterfaceManager(projectData)
+    , globalPlayhead()
+    , audioSystemBus(deviceManager.getAudioDeviceSetup(), projectData, fileRestoreProjectData, globalPlayhead)
+    , userInterfaceManager(projectData, globalPlayhead.getState())
     , projectFileManager(projectData, fileRestoreProjectData)
 {
 
@@ -22,8 +23,8 @@ MainComponent::MainComponent()
     int numOutputChannels = 2; // Stereo output
 
     juce::AudioDeviceManager::AudioDeviceSetup setup;
-    setup.sampleRate = 44100.0; // Your desired sample rate
-    setup.bufferSize = 512;      // Your desired buffer size
+    //setup.sampleRate = 44100.0; // Your desired sample rate
+    //setup.bufferSize = 512;      // Your desired buffer size
 
     error = deviceManager.initialise(
         numInputChannels,
@@ -43,44 +44,10 @@ MainComponent::MainComponent()
     }
     */
 
-    /*
-    // Some platforms require permissions to open input channels so request that here
-    if (juce::RuntimePermissions::isRequired (juce::RuntimePermissions::recordAudio)
-        && !juce::RuntimePermissions::isGranted (juce::RuntimePermissions::recordAudio))
-    {
-        juce::RuntimePermissions::request (juce::RuntimePermissions::recordAudio,
-            [&](bool granted) { setAudioChannels (granted ? 2 : 0, 2); });
-    }
-    else
-    {
-        // Specify the number of input and output channels that we want to open
-        setAudioChannels (0, 2);
-    }
-    */
-
-    /*
-    juce::String error = deviceManager.initialiseWithDefaultDevices(0, 2); // 0 inputs, 2 outputs
-    if (error.isNotEmpty())
-    {
-        juce::AlertWindow::showMessageBoxAsync(
-            juce::AlertWindow::WarningIcon,
-            "Audio Device Error",
-            "Failed to initialize audio device: " + error
-        );
-    }
-    */
-
     setAudioChannels(0, 2);
 
-    auto setup = deviceManager.getAudioDeviceSetup();
-    GlobalPlayhead::getInstance()->setSampleRate(setup.sampleRate);
-    //setup.sampleRate = 48000.0;
-    //setup.bufferSize = 512;
-    setup.inputChannels = 0;
-    setup.outputChannels = 2;
-    deviceManager.setAudioDeviceSetup(setup, true);
-
     auto currentSetup = deviceManager.getAudioDeviceSetup();
+    globalPlayhead.setSampleRate(currentSetup.sampleRate);
     juce::Logger::writeToLog("Sample Rate: " + juce::String(currentSetup.sampleRate));
     juce::Logger::writeToLog("Buffer Size: " + juce::String(currentSetup.bufferSize));
 
@@ -88,6 +55,7 @@ MainComponent::MainComponent()
 
     projectData.setProperty("View", "ROOM", nullptr); //SETEA LA VISTA ACTUAL
     projectData.setProperty("Zoom", playlistThumbnailZoomConstants::x1, nullptr); //SETEA EL ZOOM ACTUAL
+    projectData.setProperty("bpm", "90.00", nullptr); //SETEA EL BPM INICIAL
 
     formatManager.registerBasicFormats();
     addAndMakeVisible(userInterfaceManager);
@@ -194,7 +162,7 @@ void MainComponent::startRendering()
                 int bufferSize = setup.bufferSize;
 
                 // Create and start render thread
-                renderThread = std::make_unique<RenderThread>(audioSystemBus, file, sampleRate, bufferSize);
+                renderThread = std::make_unique<RenderThread>(audioSystemBus, file, sampleRate, bufferSize, (double)globalPlayhead.getState().getProperty("realAudioTime"));
 
                 // Show progress window
                 auto* progressWindow = new ProgressWindowUI(*renderThread, "Rendering...");
@@ -219,43 +187,3 @@ void MainComponent::valueChanged(juce::Value& value)
         break;
     }
 }
-
-/*
-void MainComponent::loadButtonClicked()
-{
-
-    audioSystemBus.addAudioChannel();
-
-}
-
-
-void MainComponent::saveButtonClicked()
-{
-    
-    //audioSystemBus.save();
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::SAVE_FILE);
-    
-}
-
-void MainComponent::loadFileButtonClicked()
-{
-
-    //audioSystemBus.loadFile();
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::LOAD_FILE);
-
-}
-
-
-void MainComponent::playButtonClicked()
-{
-    //audioTransportSource.start();
-    audioSystemBus.start();
-}
-
-void MainComponent::stopButtonClicked()
-{
-    //audioTransportSource.stop();
-    audioSystemBus.stop();
-    DBG(projectData.toXmlString());
-}
-*/

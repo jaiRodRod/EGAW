@@ -20,10 +20,6 @@
               resource="0" file="Source/RoutingActionStateManager.cpp"/>
         <FILE id="AOTWT3" name="RoutingActionStateManager.h" compile="0" resource="0"
               file="Source/RoutingActionStateManager.h"/>
-        <FILE id="OGNr1k" name="SharedLock_UI_Timers.cpp" compile="1" resource="0"
-              file="Source/SharedLock_UI_Timers.cpp"/>
-        <FILE id="jAGnZ7" name="SharedLock_UI_Timers.h" compile="0" resource="0"
-              file="Source/SharedLock_UI_Timers.h"/>
         <FILE id="anXo9a" name="SignalManagerUI.cpp" compile="1" resource="0"
               file="Source/SignalManagerUI.cpp"/>
         <FILE id="uMsafJ" name="SignalManagerUI.h" compile="0" resource="0"

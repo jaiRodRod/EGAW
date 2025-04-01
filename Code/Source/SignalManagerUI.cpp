@@ -12,9 +12,9 @@
 
 JUCE_IMPLEMENT_SINGLETON(SignalManagerUI);
 
-SignalManagerUI::SignalManagerUI()
+SignalManagerUI::SignalManagerUI() : signalValue(juce::var(static_cast<int>(Signal::NULL_SIGNAL)))
 {
-    signalValue = static_cast<int>(Signal::NULL_SIGNAL);
+
 }
 
 SignalManagerUI::Signal SignalManagerUI::getCurrentSignal() const

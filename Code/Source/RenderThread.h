@@ -18,7 +18,7 @@ class RenderThread : public juce::Thread, private juce::AsyncUpdater
 {
 public:
 
-    RenderThread(AudioSystemBus& src, const juce::File& f, double sampleRate, int bufferSize);
+    RenderThread(AudioSystemBus& src, const juce::File& f, double sampleRate, int bufferSize, double seconds_to_render);
 
     void run() override;
 
@@ -29,6 +29,7 @@ private:
 
     double sampleRate;
     int bufferSize;
+    double seconds_to_render;
 
     AudioSystemBus& audioSource;
     juce::File outputFile;
