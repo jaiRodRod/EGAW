@@ -19,7 +19,7 @@ PanKnobSlider::PanKnobSlider(juce::ValueTree& channelSettings)
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 
     DBG(channelSettings.getType().toString());
 
@@ -37,20 +37,23 @@ PanKnobSlider::PanKnobSlider(juce::ValueTree& channelSettings)
 
 PanKnobSlider::~PanKnobSlider()
 {
-    SignalManagerUI::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
 }
 
-void PanKnobSlider::valueChanged(juce::Value& value)
+void PanKnobSlider::handleMessage(const juce::Message& message)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
 
-    switch (signal)
-    {
-    case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
-        setValue(static_cast<float>(channelSettings.getProperty("Pan")));
-        break;
-    default:
-        break;
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
+            setValue(static_cast<float>(channelSettings.getProperty("Pan")));
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -65,7 +68,7 @@ void PanKnobSlider::setDataMode(bool shouldBeOn)
     {
         setTextBoxStyle(NoTextBox, true, getTextBoxWidth(), getTextBoxHeight());
     }
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 }
 
 void PanKnobSlider::mouseDrag(const juce::MouseEvent& event)
@@ -102,26 +105,3 @@ void PanKnobSlider::mouseDown(const juce::MouseEvent& event)
         juce::Slider::mouseDown(event);
     }
 }
-
-/*
-void PanKnobSlider::paint (juce::Graphics& g)
-{
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("PanKnobSlider", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
-}
-
-void PanKnobSlider::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
-*/

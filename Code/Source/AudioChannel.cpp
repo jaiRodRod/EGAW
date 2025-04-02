@@ -99,7 +99,7 @@ void AudioChannel::loadFile()
             if (file.existsAsFile())
             {
                 loadFileInternal(file);
-                SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::DO_ADD_AUDIO_CHANNEL);
+                SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::DO_ADD_AUDIO_CHANNEL);
             }
             fileChooser.reset();
         });

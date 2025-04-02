@@ -19,7 +19,7 @@ ChannelVolumeSlider::ChannelVolumeSlider(juce::ValueTree& channelSettings)
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 
     setTextValueSuffix(" dB");
     setValue(channelSettings.getProperty("Gain"), juce::NotificationType::dontSendNotification);
@@ -37,21 +37,23 @@ ChannelVolumeSlider::ChannelVolumeSlider(juce::ValueTree& channelSettings)
 
 ChannelVolumeSlider::~ChannelVolumeSlider()
 {
-    SignalManagerUI::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
 }
 
-
-void ChannelVolumeSlider::valueChanged(juce::Value& value)
+void ChannelVolumeSlider::handleMessage(const juce::Message& message)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
 
-    switch (signal)
-    {
-    case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
-        setValue(static_cast<double>(channelSettings.getProperty("Gain")));
-        break;
-    default:
-        break;
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
+            setValue(static_cast<double>(channelSettings.getProperty("Gain")));
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -66,7 +68,7 @@ void ChannelVolumeSlider::setDataMode(bool shouldBeOn)
     {
         setTextBoxStyle(NoTextBox, true, getTextBoxWidth(), getTextBoxHeight());
     }
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 }
 
 void ChannelVolumeSlider::mouseDrag(const juce::MouseEvent& event)
@@ -103,26 +105,3 @@ void ChannelVolumeSlider::mouseDown(const juce::MouseEvent& event)
         juce::Slider::mouseDown(event);
     }
 }
-
-/*
-void ChannelVolumeSlider::paint (juce::Graphics& g)
-{
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("ChannelVolumeSlider", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
-}
-
-void ChannelVolumeSlider::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
-*/

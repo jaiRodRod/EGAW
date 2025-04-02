@@ -18,7 +18,7 @@
 #include "RoutingActionStateManager.h"
 #include "GlobalPlayhead.h"
 
-class AudioSystemBus : public juce::PositionableAudioSource, public juce::Value::Listener, public juce::ValueTree::Listener
+class AudioSystemBus : public juce::PositionableAudioSource, public juce::ValueTree::Listener, public juce::MessageListener
 {
 
 public:
@@ -30,8 +30,8 @@ public:
     /// Metodo que usamos para recoger las ses en el SignalManagerUI
     /// </summary>
     /// <param name=""></param>
-    void valueChanged(juce::Value&) override;
     void valueTreeChildRemoved(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved) override;
+	void handleMessage(const juce::Message& message) override;
 
     // Implementacion de los metodos de juce::AudioSource
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;

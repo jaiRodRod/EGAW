@@ -24,16 +24,15 @@
 #define MENU_BACKGROUND_COLOUR_ID 0
 
 //==============================================================================
-/*
-*/
-class UserInterfaceManager  : public juce::Component, public juce::Value::Listener, public juce::ValueTree::Listener
+
+class UserInterfaceManager : public juce::Component, public juce::ValueTree::Listener, public juce::MessageListener
 {
 public:
     UserInterfaceManager(juce::ValueTree&, juce::ValueTree&);
     ~UserInterfaceManager() override;
 
-    void valueChanged(juce::Value& value) override;
     void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;
+	void handleMessage(const juce::Message& message) override;
 
     void paint (juce::Graphics&) override;
     void resized() override;

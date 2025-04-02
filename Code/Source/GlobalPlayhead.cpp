@@ -27,7 +27,7 @@ void GlobalPlayhead::timerCallback()
     auto actualTime = juce::RelativeTime(((double)getPlayheadPosition()) / sampleRate);
     if (actualTime.inSeconds() >= (double)playheadState.getProperty("time"))
     {
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::STOP_AUDIO);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::STOP_AUDIO);
     }
 }
 

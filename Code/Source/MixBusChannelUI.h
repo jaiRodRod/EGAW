@@ -25,13 +25,13 @@
 //==============================================================================
 /*
 */
-class MixBusChannelUI : public juce::Component, public juce::Value::Listener
+class MixBusChannelUI : public juce::Component, public juce::MessageListener
 {
 public:
     MixBusChannelUI(juce::ValueTree&, juce::String);
     ~MixBusChannelUI() override;
 
-    void valueChanged(juce::Value&) override;
+	void handleMessage(const juce::Message& message) override;
 
     void paint (juce::Graphics&) override;
     void resized() override;

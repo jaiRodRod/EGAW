@@ -25,7 +25,7 @@ MasterBusChannelUI::MasterBusChannelUI(juce::ValueTree& projectData)
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    RoutingActionStateManager::getInstance()->addListener(this);
+    RoutingActionStateManager::getInstance().addListener(this);
 
     routeIn.setButtonText("Route In");
     routeIn.setEnabled(false);
@@ -42,40 +42,33 @@ MasterBusChannelUI::MasterBusChannelUI(juce::ValueTree& projectData)
 
 MasterBusChannelUI::~MasterBusChannelUI()
 {
-    RoutingActionStateManager::getInstance()->removeListener(this);
+    RoutingActionStateManager::getInstance().removeListener(this);
 }
 
-void MasterBusChannelUI::valueChanged(juce::Value& value)
+void MasterBusChannelUI::handleMessage(const juce::Message& message)
 {
-    /*
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
-
-    switch (signal)
+    if (const auto* routingMsg = dynamic_cast<const RoutingMessage*>(&message))
     {
-    default:
-        break;
-    }
-    */
+        const auto state = static_cast<RoutingActionStateManager::RoutingState>(routingMsg->routingState);
 
-    auto state = RoutingActionStateManager::getInstance()->getCurrentState();
-    
-    switch (state)
-    {
-    case RoutingActionStateManager::RoutingState::ROUTING_OFF:
-        routeIn.setEnabled(false);
-        break;
-    case RoutingActionStateManager::RoutingState::ROUTING_ON:
-        if(!originAlreadyRoutedIn())
-            routeIn.setEnabled(true);
-        break;
-    case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
-        if (originAlreadyRoutedIn())
-            routeIn.setEnabled(true);
-        break;
-    case RoutingActionStateManager::RoutingState::VIEWING_ROUTES:
-        break;
-    default:
-        break;
+        switch (state)
+        {
+        case RoutingActionStateManager::RoutingState::ROUTING_OFF:
+            routeIn.setEnabled(false);
+            break;
+        case RoutingActionStateManager::RoutingState::ROUTING_ON:
+            if (!originAlreadyRoutedIn())
+                routeIn.setEnabled(true);
+            break;
+        case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
+            if (originAlreadyRoutedIn())
+                routeIn.setEnabled(true);
+            break;
+        case RoutingActionStateManager::RoutingState::VIEWING_ROUTES:
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -103,7 +96,7 @@ void MasterBusChannelUI::resized()
 
 bool MasterBusChannelUI::originAlreadyRoutedIn()
 {
-    auto originChannelUuid = RoutingActionStateManager::getInstance()->getOriginChannelUuid();
+    auto originChannelUuid = RoutingActionStateManager::getInstance().getOriginChannelUuid();
     auto channelData = projectData.getChildWithName(originChannelUuid);
     auto channelsRoutedToOriginData = channelData.getChildWithName("channelsRoutedTo");
 

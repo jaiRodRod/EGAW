@@ -14,7 +14,7 @@
 //==============================================================================
 SoloButton::SoloButton(juce::ValueTree& channelSettings) : juce::ToggleButton(), channelSettings(channelSettings)
 {
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 
     setToggleable(true);
     setToggleState(channelSettings.getProperty("Solo"), false);
@@ -25,20 +25,23 @@ SoloButton::SoloButton(juce::ValueTree& channelSettings) : juce::ToggleButton(),
 
 SoloButton::~SoloButton()
 {
-    SignalManagerUI::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
 }
 
-void SoloButton::valueChanged(juce::Value& value)
+void SoloButton::handleMessage(const juce::Message& message)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
 
-    switch (signal)
-    {
-    case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
-        setToggleState(channelSettings.getProperty("Solo"), false);
-        break;
-    default:
-        break;
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
+            setToggleState(channelSettings.getProperty("Solo"), false);
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -47,26 +50,3 @@ void SoloButton::setSolo(bool soloButtonToggleState)
     channelSettings.setProperty("Solo", soloButtonToggleState, nullptr);
     //DBG(channelSettings.toXmlString());
 }
-
-/*
-void SoloButton::paint (juce::Graphics& g)
-{
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("SoloButton", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
-}
-
-void SoloButton::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
-*/

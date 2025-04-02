@@ -17,13 +17,12 @@
 
 //==============================================================================
 
-class PlaylistView  : public juce::Component, public juce::ValueTree::Listener /*, public juce::Value::Listener*/
+class PlaylistView  : public juce::Component, public juce::ValueTree::Listener
 {
 public:
     PlaylistView(juce::ValueTree&, juce::ValueTree&);
     ~PlaylistView() override;
 
-    /*void valueChanged(juce::Value& value) override;*/
     void valueTreeChildAdded (juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenAdded) override;
 
     void paint (juce::Graphics&) override;

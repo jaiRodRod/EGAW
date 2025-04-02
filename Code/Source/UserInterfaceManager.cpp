@@ -26,8 +26,8 @@ UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData, juce::V
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    SignalManagerUI::getInstance()->addListener(this);
-    RoutingActionStateManager::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
+    RoutingActionStateManager::getInstance().addListener(this);
     projectData.addListener(this);
 
     getLookAndFeel().setColour(juce::ResizableWindow::backgroundColourId, juce::Colour(50,50,50));
@@ -44,55 +44,9 @@ UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData, juce::V
 
 UserInterfaceManager::~UserInterfaceManager()
 {
-    SignalManagerUI::getInstance()->removeListener(this);
-    RoutingActionStateManager::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
+    RoutingActionStateManager::getInstance().removeListener(this);
     projectData.removeListener(this);
-}
-
-void UserInterfaceManager::valueChanged(juce::Value& value)
-{
-
-    if (value == SignalManagerUI::getInstance()->getValue())
-    {
-        auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
-
-        switch (signal)
-        {
-        case SignalManagerUI::Signal::RESIZED_TRIGGER:
-            repaint();
-            resized();
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
-            break;
-        case SignalManagerUI::Signal::REBUILD_UI:
-            rebuildUI();
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
-            break;
-        case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
-            break;
-        default:
-            break;
-        }
-    }
-    else if (value == RoutingActionStateManager::getInstance()->getValue())
-    {
-		auto state = RoutingActionStateManager::getInstance()->getCurrentState();
-
-		switch (state)
-		{
-		case RoutingActionStateManager::RoutingState::ROUTING_ON:
-			invokeRoutingOverlay();
-			break;
-		case RoutingActionStateManager::RoutingState::ROUTING_OFF:
-			removeRoutingOverlay();
-			break;
-		case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
-			invokeRoutingOverlay();
-			break;
-		default:
-			break;
-		}
-    }
 }
 
 void UserInterfaceManager::valueTreePropertyChanged(juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property)
@@ -114,6 +68,51 @@ void UserInterfaceManager::valueTreePropertyChanged(juce::ValueTree& treeWhosePr
                 selectedView = 2;
             }
             resized();
+        }
+    }
+}
+
+void UserInterfaceManager::handleMessage(const juce::Message& message)
+{
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
+
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::RESIZED_TRIGGER:
+            repaint();
+            resized();
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
+            break;
+        case SignalManagerUI::Signal::REBUILD_UI:
+            rebuildUI();
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
+            break;
+        case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+            break;
+        default:
+            break;
+        }
+    }
+    else if (const auto* routingMsg = dynamic_cast<const RoutingMessage*>(&message))
+    {
+        const auto state = static_cast<RoutingActionStateManager::RoutingState>(routingMsg->routingState);
+
+        switch (state)
+        {
+        case RoutingActionStateManager::RoutingState::ROUTING_ON:
+            invokeRoutingOverlay();
+            break;
+        case RoutingActionStateManager::RoutingState::ROUTING_OFF:
+            removeRoutingOverlay();
+            break;
+        case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
+            invokeRoutingOverlay();
+            break;
+        default:
+            break;
         }
     }
 }

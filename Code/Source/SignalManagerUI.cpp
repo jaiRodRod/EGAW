@@ -10,34 +10,59 @@
 
 #include "SignalManagerUI.h"
 
-JUCE_IMPLEMENT_SINGLETON(SignalManagerUI);
-
-SignalManagerUI::SignalManagerUI() : signalValue(juce::var(static_cast<int>(Signal::NULL_SIGNAL)))
+SignalManagerUI& SignalManagerUI::getInstance()
 {
-
+    static SignalManagerUI instance;
+    return instance;
 }
 
-SignalManagerUI::Signal SignalManagerUI::getCurrentSignal() const
-{
-    return static_cast<Signal>(static_cast<int>(signalValue.getValue()));
-}
+SignalManagerUI::SignalManagerUI() = default;
+SignalManagerUI::~SignalManagerUI() { cancelPendingUpdate(); }
 
-void SignalManagerUI::setSignal(Signal newSignal)
+void SignalManagerUI::setSignalInternal(int newSignal)
 {
-    juce::MessageManager::callAsync([this, newSignal]()
+    bool needsTrigger = false;
     {
-        signalValue = static_cast<int>(newSignal); // Ensure it's set on UI thread
-    });
+        const juce::ScopedLock lock(queueLock);
+        if (signalQueue.empty() || signalQueue.back() != newSignal)
+        {
+            signalQueue.push_back(newSignal);
+            needsTrigger = !notificationPending.exchange(true);
+        }
+    }
+
+    if (needsTrigger)
+        triggerAsyncUpdate();
 }
 
-void SignalManagerUI::addListener(juce::Value::Listener* listener)
+void SignalManagerUI::handleAsyncUpdate()
 {
-    const juce::ScopedLock lock(listenerLock);
-    signalValue.addListener(listener);
+    std::deque<int> localQueue;
+    {
+        const juce::ScopedLock lock(queueLock);
+        localQueue.swap(signalQueue);
+        notificationPending.store(false);
+    }
+
+    // Process on message thread
+    juce::MessageManager::callAsync([this, localQueue = std::move(localQueue)]()
+        {
+            for (const auto signal : localQueue)
+            {
+                SignalMessage msg(signal); // Properly constructed
+                listeners.call([&msg](juce::MessageListener& l) {
+                    l.handleMessage(msg); // Correct message passing
+                    });
+            }
+        });
 }
 
-void SignalManagerUI::removeListener(juce::Value::Listener* listener)
+void SignalManagerUI::addListener(juce::MessageListener* listener)
 {
-    const juce::ScopedLock lock(listenerLock);
-    signalValue.removeListener(listener);
+    listeners.add(listener);
+}
+
+void SignalManagerUI::removeListener(juce::MessageListener* listener)
+{
+    listeners.remove(listener);
 }

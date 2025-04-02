@@ -11,7 +11,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SignalManagerUI.h"
 #include "RoutingActionStateManager.h"
 #include "DisplaySingleton.h"
 #include "ChannelColourSelector.h"
@@ -26,13 +25,13 @@
 //==============================================================================
 /*
 */
-class AudioChannelMixerUI  : public juce::Component, public juce::Value::Listener
+class AudioChannelMixerUI  : public juce::Component, public juce::MessageListener
 {
 public:
     AudioChannelMixerUI(juce::ValueTree&, juce::String);
     ~AudioChannelMixerUI() override;
 
-    void valueChanged(juce::Value&) override;
+	void handleMessage(const juce::Message& message) override;
 
     void paint (juce::Graphics&) override;
     void resized() override;

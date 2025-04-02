@@ -25,7 +25,7 @@ PlaylistChannelsView::PlaylistChannelsView(juce::ValueTree& projectData, juce::V
 {
     projectData.addListener(this);
     playheadState.addListener(this);
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 
     addAndMakeVisible(separator);
 
@@ -43,7 +43,7 @@ PlaylistChannelsView::~PlaylistChannelsView()
 {
     projectData.removeListener(this);
     playheadState.removeListener(this);
-    SignalManagerUI::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
 }
 
 void PlaylistChannelsView::valueTreePropertyChanged(juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property)
@@ -52,7 +52,7 @@ void PlaylistChannelsView::valueTreePropertyChanged(juce::ValueTree& treeWhosePr
     {
         if (property.toString() == "Zoom")
         {
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
     }
     else if (treeWhosePropertyHasChanged == playheadState)
@@ -93,7 +93,7 @@ void PlaylistChannelsView::valueTreeChildAdded(juce::ValueTree& parentTree, juce
             audioChannels.add(new AudioChannelPlaylistUI(projectData, (childWhichHasBeenAdded.getType()).toString()));
             addAndMakeVisible(audioChannels.getLast());
         }
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -113,7 +113,7 @@ void PlaylistChannelsView::valueTreeChildRemoved(juce::ValueTree& parentTree, ju
         }
         if (removed)
         {
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
     }
 }
@@ -122,21 +122,24 @@ void PlaylistChannelsView::valueTreeChildOrderChanged(juce::ValueTree& parentTre
 {
     if (parentTreeWhoseChildrenHaveMoved == projectData.getChildWithName("channelOrder"))
     {
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
-void PlaylistChannelsView::valueChanged(juce::Value& value)
+void PlaylistChannelsView::handleMessage(const juce::Message& message)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
 
-    switch (signal)
-    {
-    case SignalManagerUI::Signal::REBUILD_UI:
-        rebuildUI();
-        break;
-    default:
-        break;
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::REBUILD_UI:
+            rebuildUI();
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -194,11 +197,13 @@ void PlaylistChannelsView::resized()
         separator.setBounds(area.removeFromLeft(5));
     }
 
-    //Hacemos el mismo procedimiento para los thumnails
-    horizontalViewport.setBounds(area);
     //Sustituir el 50 por el Coeficiente de Zoom (50 en este caso es que cada segundo de tiempo ocupa 50px)
     auto thumbnailLengthWidth = (double)projectData.getProperty("Zoom") * (double)playheadState.getProperty("time");
     playlistThumbnailChannelsView.setSize(thumbnailLengthWidth, channelHeight * getNumAudioChannels() + (displayBounds.getHeight() / 36)); //Check
+
+    
+    //Hacemos el mismo procedimiento para los thumnails
+    horizontalViewport.setBounds(area);
 }
 
 void PlaylistChannelsView::rebuildUI()
@@ -225,12 +230,12 @@ void PlaylistChannelsView::rebuildUI()
         }
     }
 
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 }
 
 void PlaylistChannelsView::doAddAudioChannel()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::ADD_AUDIO_CHANNEL);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::ADD_AUDIO_CHANNEL);
 }
 
 AudioChannelPlaylistUI* PlaylistChannelsView::getAudioChannelPlaylistUI(juce::String channelUuid)

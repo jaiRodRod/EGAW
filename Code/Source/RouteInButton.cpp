@@ -17,7 +17,7 @@ RouteInButton::RouteInButton(juce::String channelUuid) : juce::TextButton(), cha
 
 void RouteInButton::routeInClicked()
 {
-    auto state = RoutingActionStateManager::getInstance()->getCurrentState();
+    auto state = RoutingActionStateManager::getInstance().getCurrentState();
 
     switch (state)
     {
@@ -35,13 +35,13 @@ void RouteInButton::routeInClicked()
 void RouteInButton::doRouteIn()
 {
     DBG("Routing!!!");
-    RoutingActionStateManager::getInstance()->setDestinyChannelUuid(channelUuid);
-    RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::COMPLETED_ROUTING);
+    RoutingActionStateManager::getInstance().setDestinyChannelUuid(channelUuid);
+    RoutingActionStateManager::getInstance().setState(RoutingActionStateManager::RoutingState::COMPLETED_ROUTING);
 }
 
 void RouteInButton::doRemoveRouteIn()
 {
     DBG("Removing Route!!!");
-    RoutingActionStateManager::getInstance()->setDestinyChannelUuid(channelUuid);
-    RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::COMPLETED_REMOVING_ROUTE);
+    RoutingActionStateManager::getInstance().setDestinyChannelUuid(channelUuid);
+    RoutingActionStateManager::getInstance().setState(RoutingActionStateManager::RoutingState::COMPLETED_REMOVING_ROUTE);
 }

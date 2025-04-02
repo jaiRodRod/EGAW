@@ -29,7 +29,7 @@ void RenderThread::run()
         // Show success message on main thread
         messageToShow = "Rendering complete!\n" + outputFile.getFullPathName();
         triggerAsyncUpdate();
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::STOP_AUDIO);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::STOP_AUDIO);
     }
 }
 

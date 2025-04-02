@@ -89,15 +89,15 @@ void PlayerControlGrid::playButtonClicked()
 {
     if (playing == false)
     {
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::PLAY_AUDIO);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::PLAY_AUDIO);
     }
     else if (playing == true)
     {
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::PAUSE_AUDIO);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::PAUSE_AUDIO);
     }
 }
 
 void PlayerControlGrid::stopButtonClicked()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::STOP_AUDIO);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::STOP_AUDIO);
 }

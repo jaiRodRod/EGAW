@@ -12,7 +12,7 @@ MainComponent::MainComponent()
     , projectFileManager(projectData, fileRestoreProjectData)
 {
 
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 
     /*
     // ======================================================================
@@ -64,6 +64,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+	SignalManagerUI::getInstance().removeListener(this);
     // This shuts down the audio device and clears the audio source.
     shutdownAudio();
 }
@@ -143,6 +144,23 @@ void MainComponent::resized()
 
 }
 
+void MainComponent::handleMessage(const juce::Message& message)
+{
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
+
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::RUN_EXPORT_PROCESS:
+            startRendering();
+            break;
+        default:
+            break;
+        }
+    }
+}
+
 void MainComponent::startRendering()
 {
     fileChooser = std::make_unique<juce::FileChooser>("Save WAV File",
@@ -172,18 +190,4 @@ void MainComponent::startRendering()
             }
             fileChooser.reset();
         });
-}
-
-void MainComponent::valueChanged(juce::Value& value)
-{
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
-
-    switch (signal)
-    {
-    case SignalManagerUI::Signal::RUN_EXPORT_PROCESS:
-        startRendering();
-        break;
-    default:
-        break;
-    }
 }

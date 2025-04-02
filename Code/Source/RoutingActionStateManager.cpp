@@ -10,56 +10,102 @@
 
 #include "RoutingActionStateManager.h"
 
-JUCE_IMPLEMENT_SINGLETON(RoutingActionStateManager);
-
-RoutingActionStateManager::RoutingActionStateManager() : state(juce::var(static_cast<int>(RoutingState::ROUTING_OFF)))
+RoutingActionStateManager& RoutingActionStateManager::getInstance()
 {
-
+    static RoutingActionStateManager instance;
+    return instance;
 }
 
-RoutingActionStateManager::RoutingState RoutingActionStateManager::getCurrentState() const
+RoutingActionStateManager::RoutingActionStateManager() = default;
+RoutingActionStateManager::~RoutingActionStateManager() { cancelPendingUpdate(); }
+
+// Thread-safe state management
+RoutingActionStateManager::RoutingState RoutingActionStateManager::getCurrentState() const noexcept
 {
-    return static_cast<RoutingState>(static_cast<int>(state.getValue()));
+    return currentState.load(std::memory_order_acquire);
 }
 
 void RoutingActionStateManager::setState(RoutingState newState)
 {
-    state = static_cast<int>(newState);
+    bool needsTrigger = false;
+    {
+        juce::ScopedLock lock(activeListenersLock);
+        stateQueue.push_back(newState);
+        needsTrigger = !notificationPending.exchange(true);
+    }
+    if (needsTrigger) triggerAsyncUpdate();
 }
 
-void RoutingActionStateManager::addListener(juce::Value::Listener* listener)
+// Thread-safe listener management
+void RoutingActionStateManager::addListener(juce::MessageListener* listener)
 {
-    state.addListener(listener);
+    juce::ScopedLock lock(activeListenersLock);
+    activeListeners.insert(listener);
+    listeners.add(listener);
 }
 
-void RoutingActionStateManager::removeListener(juce::Value::Listener* listener)
+void RoutingActionStateManager::removeListener(juce::MessageListener* listener)
 {
-    state.removeListener(listener);
+    juce::ScopedLock lock(activeListenersLock);
+    activeListeners.erase(listener);
+    listeners.remove(listener);
 }
 
-juce::String RoutingActionStateManager::getOriginChannelUuid()
+// Thread-safe string access
+juce::String RoutingActionStateManager::getOriginChannelUuid() const
 {
+    juce::ScopedLock lock(stringLock);
     return originChannelUuid;
 }
 
-void RoutingActionStateManager::setOriginChannelUuid(juce::String originChannelUuid)
+void RoutingActionStateManager::setOriginChannelUuid(const juce::String& uuid)
 {
-    this->originChannelUuid = originChannelUuid;
+    juce::ScopedLock lock(stringLock);
+    originChannelUuid = uuid;
 }
 
-juce::String RoutingActionStateManager::getDestinyChannelUuid()
+juce::String RoutingActionStateManager::getDestinyChannelUuid() const
 {
+    juce::ScopedLock lock(stringLock);
     return destinyChannelUuid;
 }
 
-void RoutingActionStateManager::setDestinyChannelUuid(juce::String destinyChannelUuid)
+void RoutingActionStateManager::setDestinyChannelUuid(const juce::String& uuid)
 {
-    this->destinyChannelUuid = destinyChannelUuid;
+    juce::ScopedLock lock(stringLock);
+    destinyChannelUuid = uuid;
 }
 
 void RoutingActionStateManager::routingOff()
 {
     setState(RoutingState::ROUTING_OFF);
-    setOriginChannelUuid(juce::String());
-    setDestinyChannelUuid(juce::String());
+    setOriginChannelUuid({});
+    setDestinyChannelUuid({});
+}
+
+// Core message delivery
+void RoutingActionStateManager::handleAsyncUpdate()
+{
+    std::deque<RoutingState> localQueue;
+    {
+        juce::ScopedLock lock(activeListenersLock);
+        localQueue.swap(stateQueue);
+        notificationPending.store(false, std::memory_order_release);
+    }
+
+    for (const auto state : localQueue)
+    {
+        currentState.store(state, std::memory_order_release);
+
+        juce::MessageManager::callAsync([this, state]() {
+            RoutingMessage msg(static_cast<int>(state));
+
+            listeners.call([this, &msg](juce::MessageListener& l) {
+                juce::ScopedLock lock(activeListenersLock);
+                if (activeListeners.find(&l) != activeListeners.end()) {
+                    l.handleMessage(msg);
+                }
+                });
+            });
+    }
 }

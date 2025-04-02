@@ -24,6 +24,7 @@
               file="Source/SignalManagerUI.cpp"/>
         <FILE id="uMsafJ" name="SignalManagerUI.h" compile="0" resource="0"
               file="Source/SignalManagerUI.h"/>
+        <FILE id="BYah1A" name="SignalMessage.h" compile="0" resource="0" file="Source/SignalMessage.h"/>
       </GROUP>
       <GROUP id="{78C3C251-8374-3633-E37B-FFED66427753}" name="UserInterface">
         <GROUP id="{4C7D3674-EF41-A64F-BCD3-CE11F92BEBD2}" name="PlaylistInterface">

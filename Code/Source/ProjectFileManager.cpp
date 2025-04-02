@@ -12,31 +12,34 @@
 
 ProjectFileManager::ProjectFileManager(juce::ValueTree& projectData, juce::ValueTree& fileRestoreProjectData) : projectData(projectData), fileRestoreProjectData(fileRestoreProjectData)
 {
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 }
 
 ProjectFileManager::~ProjectFileManager()
 {
-    SignalManagerUI::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
 }
 
-void ProjectFileManager::valueChanged(juce::Value& value)
+void ProjectFileManager::handleMessage(const juce::Message& message)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
 
-    switch (signal)
-    {
-    case SignalManagerUI::Signal::LOAD_FILE:
-        loadFile();
-        break;
-    case SignalManagerUI::Signal::SAVE_FILE:
-        save();
-        break;
-    case SignalManagerUI::Signal::SAVE_AS_FILE:
-        saveAs();
-        break;
-    default:
-        break;
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::LOAD_FILE:
+            loadFile();
+            break;
+        case SignalManagerUI::Signal::SAVE_FILE:
+            save();
+            break;
+        case SignalManagerUI::Signal::SAVE_AS_FILE:
+            saveAs();
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -80,7 +83,7 @@ void ProjectFileManager::selectSaveFileInternal()
             }
             else
             {
-                SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
+                SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
             }
             fileChooser.reset();
         });
@@ -131,11 +134,11 @@ void ProjectFileManager::selectLoadFileInternal()
                 xml = juce::parseXML(saveFile);
                 fileRestoreProjectData.copyPropertiesAndChildrenFrom(juce::ValueTree::fromXml(*(xml.get())), nullptr);
 
-                SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESTORE_PROJECT_DATA);
+                SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESTORE_PROJECT_DATA);
             }
             else
             {
-                SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
+                SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::NULL_SIGNAL);
             }
             fileChooser.reset();
         });

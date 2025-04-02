@@ -17,7 +17,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent  : public juce::AudioAppComponent, public juce::Value::Listener
+class MainComponent  : public juce::AudioAppComponent, public juce::MessageListener
 {
 public:
     //==============================================================================
@@ -35,7 +35,7 @@ public:
 
 
     //For rendering
-    void valueChanged(juce::Value& value) override;
+	void handleMessage(const juce::Message& message) override;
     void startRendering();
 
 

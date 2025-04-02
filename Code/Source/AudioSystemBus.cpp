@@ -24,8 +24,8 @@ AudioSystemBus::AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup& audio
     playing = false;
     globalPlayhead.getState().setProperty("isPlaying", false, nullptr);
 
-    SignalManagerUI::getInstance()->addListener(this);
-    RoutingActionStateManager::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
+    RoutingActionStateManager::getInstance().addListener(this);
 
     masterBusChannel.setInternalChannelId(juce::Uuid("MasterBusChannel"));
     transportSource.setSource(&masterBusChannel);
@@ -44,8 +44,8 @@ AudioSystemBus::AudioSystemBus(juce::AudioDeviceManager::AudioDeviceSetup& audio
 
 AudioSystemBus::~AudioSystemBus()
 {
-    SignalManagerUI::getInstance()->removeListener(this);
-    RoutingActionStateManager::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
+    RoutingActionStateManager::getInstance().removeListener(this);
     projectData.removeListener(this);
     
     tempAudioChannel = nullptr;
@@ -55,71 +55,6 @@ AudioSystemBus::~AudioSystemBus()
 	delete tempMixBusChannel;
 
     //delete audioDeviceSetup;
-}
-
-void AudioSystemBus::valueChanged(juce::Value& value)
-{
-    if (value == SignalManagerUI::getInstance()->getValue())
-    {
-        auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
-
-        switch (signal)
-        {
-            case SignalManagerUI::Signal::RESTORE_PROJECT_DATA:
-                restoreProjectData();
-                break;
-            case SignalManagerUI::Signal::PLAY_AUDIO:
-                playing = true;
-                globalPlayhead.setIsPlaying(playing);
-                transportSource.start();
-                break;
-            case SignalManagerUI::Signal::PAUSE_AUDIO:
-                playing = false;
-                globalPlayhead.setIsPlaying(playing);
-                transportSource.stop();
-                break;
-            case SignalManagerUI::Signal::STOP_AUDIO:
-                playing = false;
-                globalPlayhead.setIsPlaying(playing);
-                transportSource.stop();
-                setTransportToBegin();
-                prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
-                break;
-            case SignalManagerUI::Signal::ADD_AUDIO_CHANNEL:
-                addAudioChannel();
-                break;
-            case SignalManagerUI::Signal::DO_ADD_AUDIO_CHANNEL:
-                doAddAudioChannel();
-                SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
-                break;
-            case SignalManagerUI::Signal::ADD_MIX_BUS_CHANNEL:
-                addMixBusChannel();
-                break;
-            default:
-                break;
-        }
-    }
-    else if (value == RoutingActionStateManager::getInstance()->getValue())
-    {
-        auto state = RoutingActionStateManager::getInstance()->getCurrentState();
-
-        switch (state)
-        {
-            case RoutingActionStateManager::RoutingState::COMPLETED_ROUTING:
-                doRouting();
-                RoutingActionStateManager::getInstance()->setOriginChannelUuid(juce::String());
-                RoutingActionStateManager::getInstance()->setDestinyChannelUuid(juce::String());
-                RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
-                break;
-            case RoutingActionStateManager::RoutingState::COMPLETED_REMOVING_ROUTE:
-                doRemoveRoute();
-                RoutingActionStateManager::getInstance()->setOriginChannelUuid(juce::String());
-                RoutingActionStateManager::getInstance()->setDestinyChannelUuid(juce::String());
-                RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
-            default:
-                break;
-        }
-    }
 }
 
 void AudioSystemBus::valueTreeChildRemoved(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved)
@@ -139,6 +74,70 @@ void AudioSystemBus::valueTreeChildRemoved(juce::ValueTree& parentTree, juce::Va
             removeAudioChannel(audioChannel, childWhichHasBeenRemoved.getChildWithName("channelsRoutedTo"));
         }
 
+    }
+}
+
+void AudioSystemBus::handleMessage(const juce::Message& message)
+{
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::RESTORE_PROJECT_DATA:
+            restoreProjectData();
+            break;
+        case SignalManagerUI::Signal::PLAY_AUDIO:
+            playing = true;
+            globalPlayhead.setIsPlaying(playing);
+            transportSource.start();
+            break;
+        case SignalManagerUI::Signal::PAUSE_AUDIO:
+            playing = false;
+            globalPlayhead.setIsPlaying(playing);
+            transportSource.stop();
+            break;
+        case SignalManagerUI::Signal::STOP_AUDIO:
+            playing = false;
+            globalPlayhead.setIsPlaying(playing);
+            transportSource.stop();
+            setTransportToBegin();
+            prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
+            break;
+        case SignalManagerUI::Signal::ADD_AUDIO_CHANNEL:
+            addAudioChannel();
+            break;
+        case SignalManagerUI::Signal::DO_ADD_AUDIO_CHANNEL:
+            doAddAudioChannel();
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+            break;
+        case SignalManagerUI::Signal::ADD_MIX_BUS_CHANNEL:
+            addMixBusChannel();
+            break;
+        default:
+            break;
+        }
+    }
+    else if (const auto* routingMsg = dynamic_cast<const RoutingMessage*>(&message))
+    {
+        const auto state = static_cast<RoutingActionStateManager::RoutingState>(routingMsg->routingState);
+
+        switch (state)
+        {
+        case RoutingActionStateManager::RoutingState::COMPLETED_ROUTING:
+            doRouting();
+            RoutingActionStateManager::getInstance().setOriginChannelUuid(juce::String());
+            RoutingActionStateManager::getInstance().setDestinyChannelUuid(juce::String());
+            RoutingActionStateManager::getInstance().setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
+            break;
+        case RoutingActionStateManager::RoutingState::COMPLETED_REMOVING_ROUTE:
+            doRemoveRoute();
+            RoutingActionStateManager::getInstance().setOriginChannelUuid(juce::String());
+            RoutingActionStateManager::getInstance().setDestinyChannelUuid(juce::String());
+            RoutingActionStateManager::getInstance().setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
+        default:
+            break;
+        }
     }
 }
 
@@ -218,7 +217,7 @@ void AudioSystemBus::addMixBusChannel()
 
     prepareToPlay(audioDeviceSetup.bufferSize, audioDeviceSetup.sampleRate);
 
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
 }
 
 void AudioSystemBus::removeMixBusChannel(MixBusChannel* mixBusChannelToRemove, juce::ValueTree channelsRoutedTo)
@@ -296,8 +295,8 @@ void AudioSystemBus::doAddAudioChannel()
 
 void AudioSystemBus::doRouting()
 {
-    auto originChannelUuid = RoutingActionStateManager::getInstance()->getOriginChannelUuid();
-    auto destinyChannelUuid = RoutingActionStateManager::getInstance()->getDestinyChannelUuid();
+    auto originChannelUuid = RoutingActionStateManager::getInstance().getOriginChannelUuid();
+    auto destinyChannelUuid = RoutingActionStateManager::getInstance().getDestinyChannelUuid();
 
     auto originChannel = getChannelByUUID(originChannelUuid);
     auto destinyChannel = getRoutableChannelByUUID(destinyChannelUuid);
@@ -309,8 +308,8 @@ void AudioSystemBus::doRouting()
 
 void AudioSystemBus::doRemoveRoute()
 {
-    auto originChannelUuid = RoutingActionStateManager::getInstance()->getOriginChannelUuid();
-    auto destinyChannelUuid = RoutingActionStateManager::getInstance()->getDestinyChannelUuid();
+    auto originChannelUuid = RoutingActionStateManager::getInstance().getOriginChannelUuid();
+    auto destinyChannelUuid = RoutingActionStateManager::getInstance().getDestinyChannelUuid();
 
     auto originChannel = getChannelByUUID(originChannelUuid);
     auto destinyChannel = getRoutableChannelByUUID(destinyChannelUuid);
@@ -494,7 +493,7 @@ void AudioSystemBus::restoreProjectData()
 
     juce::Logger::writeToLog("Done");
 
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::REBUILD_UI);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::REBUILD_UI);
 }
 
 Channel* AudioSystemBus::getChannelByUUID(juce::String uuid)

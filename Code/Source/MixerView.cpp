@@ -35,7 +35,7 @@ void MixerView::valueTreeChildAdded(juce::ValueTree& parentTree, juce::ValueTree
 {
     if (parentTree == projectData)
     {
-		SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+		SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 

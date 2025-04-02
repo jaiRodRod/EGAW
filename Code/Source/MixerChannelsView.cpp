@@ -19,7 +19,7 @@ MixerChannelsView::MixerChannelsView(juce::ValueTree& projectData)
     , projectData(projectData)
 {
     projectData.addListener(this);
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 
     juce::PopupMenu::Item addAudioChannel("Audio Channel");
     addAudioChannel.setAction([this] { doAddAudioChannel(); });
@@ -39,21 +39,7 @@ MixerChannelsView::MixerChannelsView(juce::ValueTree& projectData)
 MixerChannelsView::~MixerChannelsView()
 {
     projectData.removeListener(this);
-    SignalManagerUI::getInstance()->removeListener(this);
-}
-
-void MixerChannelsView::valueChanged(juce::Value& value)
-{
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
-
-    switch (signal)
-    {
-    case SignalManagerUI::Signal::REBUILD_UI:
-        rebuildUI();
-        break;
-    default:
-        break;
-    }
+    SignalManagerUI::getInstance().removeListener(this);
 }
 
 void MixerChannelsView::valueTreeChildAdded(juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenAdded)
@@ -72,7 +58,7 @@ void MixerChannelsView::valueTreeChildAdded(juce::ValueTree& parentTree, juce::V
             mixBusChannels.add(new MixBusChannelUI(projectData, (childWhichHasBeenAdded.getType()).toString()));
             addAndMakeVisible(mixBusChannels.getLast());
         }
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
     }
 }
 
@@ -100,7 +86,7 @@ void MixerChannelsView::valueTreeChildRemoved(juce::ValueTree& parentTree, juce:
         }
         if (removed)
         {
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
     }
 }
@@ -109,7 +95,24 @@ void MixerChannelsView::valueTreeChildOrderChanged(juce::ValueTree& parentTreeWh
 {
     if (parentTreeWhoseChildrenHaveMoved == projectData.getChildWithName("channelOrder"))
     {
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+    }
+}
+
+void MixerChannelsView::handleMessage(const juce::Message& message)
+{
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
+
+        switch (signal)
+        {
+        case SignalManagerUI::Signal::REBUILD_UI:
+            rebuildUI();
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -205,12 +208,12 @@ void MixerChannelsView::showMenu()
 
 void MixerChannelsView::doAddAudioChannel()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::ADD_AUDIO_CHANNEL);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::ADD_AUDIO_CHANNEL);
 }
 
 void MixerChannelsView::doAddMixBusChannel()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::ADD_MIX_BUS_CHANNEL);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::ADD_MIX_BUS_CHANNEL);
 }
 
 MixBusChannelUI* MixerChannelsView::getMixBusChannelUI(juce::String channelUuid)

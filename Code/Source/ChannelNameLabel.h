@@ -13,41 +13,18 @@
 #include <JuceHeader.h>
 #include "SignalManagerUI.h"
 
-//==============================================================================
-/*
-*/
-class ChannelNameLabel  : public juce::Label
+class ChannelNameLabel : public juce::Label,
+    public juce::MessageListener  // Changed from Value::Listener
 {
 public:
     ChannelNameLabel(juce::ValueTree& channelSettings);
     ~ChannelNameLabel() override;
 
-    //void paint (juce::Graphics&) override;
-    //void resized() override;
-
-    void valueChanged(juce::Value& value) override;
+    void handleMessage(const juce::Message& msg) override;  // Replaces valueChanged
 
 private:
-
-    class InternalValueListener : public juce::Value::Listener
-    {
-    public:
-        InternalValueListener(ChannelNameLabel& parent) : parentLabel(parent) {}
-
-        void valueChanged(juce::Value& value) override
-        {
-            parentLabel.valueChanged(value);
-        }
-
-    private:
-        ChannelNameLabel& parentLabel;
-    };
-
-    InternalValueListener valueListener{ *this };
-
     void textChange();
 
     juce::ValueTree channelSettings;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChannelNameLabel)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelNameLabel)
 };
