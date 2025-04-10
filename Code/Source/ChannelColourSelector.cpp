@@ -49,30 +49,8 @@ void ChannelColourSelector::openColorSelector()
         if (result == 1) // Assuming 1 means "OK" or "Update"
         {
             // Notify the parent that the colour has been updated
-            SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
+            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         }
         dialogWindow.release();
         }), true);
 }
-
-/*
-void ChannelColourSelector::paint (juce::Graphics& g)
-{
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("ChannelColourSelector", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
-}
-
-void ChannelColourSelector::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
-*/

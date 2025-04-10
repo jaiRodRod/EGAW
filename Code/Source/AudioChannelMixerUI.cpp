@@ -12,8 +12,8 @@
 #include "AudioChannelMixerUI.h"
 
 //==============================================================================
-AudioChannelMixerUI::AudioChannelMixerUI(juce::ValueTree& projectData, juce::String channelUuid) : 
-    flexContainer(juce::FlexBox::Direction::column, juce::FlexBox::Wrap::noWrap
+AudioChannelMixerUI::AudioChannelMixerUI(juce::ValueTree& projectData, juce::String channelUuid) 
+    : flexContainer(juce::FlexBox::Direction::column, juce::FlexBox::Wrap::noWrap
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
     , projectData(projectData)
@@ -30,7 +30,7 @@ AudioChannelMixerUI::AudioChannelMixerUI(juce::ValueTree& projectData, juce::Str
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    RoutingActionStateManager::getInstance()->addListener(this);
+    RoutingActionStateManager::getInstance().addListener(this);
 
     addAndMakeVisible(channelColourSelector);
 
@@ -52,26 +52,29 @@ AudioChannelMixerUI::AudioChannelMixerUI(juce::ValueTree& projectData, juce::Str
 
 AudioChannelMixerUI::~AudioChannelMixerUI()
 {
-    RoutingActionStateManager::getInstance()->removeListener(this);
+    RoutingActionStateManager::getInstance().removeListener(this);
 }
 
-void AudioChannelMixerUI::valueChanged(juce::Value& value)
+void AudioChannelMixerUI::handleMessage(const juce::Message& message)
 {
-    auto state = RoutingActionStateManager::getInstance()->getCurrentState();
-
-    switch (state)
+    if (const auto* routingMsg = dynamic_cast<const RoutingMessage*>(&message))
     {
-    case RoutingActionStateManager::RoutingState::ROUTING_ON:
-        routeTo.setEnabled(false);
-        break;
-    case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
-        routeTo.setEnabled(false);
-        break;
-    case RoutingActionStateManager::RoutingState::ROUTING_OFF:
-        routeTo.setEnabled(true);
-        break;
-    default:
-        break;
+        const auto state = static_cast<RoutingActionStateManager::RoutingState>(routingMsg->routingState);
+
+        switch (state)
+        {
+        case RoutingActionStateManager::RoutingState::ROUTING_ON:
+            routeTo.setEnabled(false);
+            break;
+        case RoutingActionStateManager::RoutingState::REMOVING_ROUTE:
+            routeTo.setEnabled(false);
+            break;
+        case RoutingActionStateManager::RoutingState::ROUTING_OFF:
+            routeTo.setEnabled(true);
+            break;
+        default:
+            break;
+        }
     }
 }
 

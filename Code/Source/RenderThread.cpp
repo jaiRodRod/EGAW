@@ -10,12 +10,13 @@
 
 #include "RenderThread.h"
 
-RenderThread::RenderThread(AudioSystemBus& src, const juce::File& f, double sampleRate, int bufferSize)
+RenderThread::RenderThread(AudioSystemBus& src, const juce::File& f, double sampleRate, int bufferSize, double seconds_to_render)
     : Thread("Audio Render Thread")
     , audioSource(src)
     , outputFile(f)
     , sampleRate(sampleRate)
     , bufferSize(bufferSize)
+    , seconds_to_render(seconds_to_render)
 {
 
 }
@@ -28,7 +29,7 @@ void RenderThread::run()
         // Show success message on main thread
         messageToShow = "Rendering complete!\n" + outputFile.getFullPathName();
         triggerAsyncUpdate();
-        SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::STOP_AUDIO);
+        SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::STOP_AUDIO);
     }
 }
 
@@ -48,7 +49,8 @@ bool RenderThread::renderNow()
         return false;
 
     outputStream.release();
-    totalSamples = 5 * sampleRate; // Total samples to render
+    totalSamples = seconds_to_render * sampleRate; // Total samples to render
+    audioSource.setTransportToBegin();
 
     DBG("Preparing thread");
     DBG("THREAD BUFFER SIZE , SAMPLE RATE: " << bufferSize << " , " << sampleRate);
@@ -58,7 +60,7 @@ bool RenderThread::renderNow()
     while (samplesRendered < totalSamples && !threadShouldExit())
     {
         DBG("RENDER PROCESS " < juce::String(samplesRendered));
-        const int numToWrite = juce::jmin(512, static_cast<int>(totalSamples - samplesRendered));
+        const int numToWrite = juce::jmin(bufferSize, static_cast<int>(totalSamples - samplesRendered));
 
         juce::AudioSourceChannelInfo info(buffer);
         info.numSamples = numToWrite;

@@ -17,7 +17,7 @@
 //==============================================================================
 /*
 */
-class PanKnobSlider  : public juce::Slider, public juce::Value::Listener
+class PanKnobSlider  : public juce::Slider, public juce::MessageListener
 {
 public:
     PanKnobSlider(juce::ValueTree&);
@@ -26,7 +26,7 @@ public:
     //void paint (juce::Graphics&) override;
     //void resized() override;
 
-    void valueChanged(juce::Value& value) override;
+	void handleMessage(const juce::Message& message) override;
 
     //Metodo para mostrar datos en las parametrizaciones
     void setDataMode(bool shouldBeOn);

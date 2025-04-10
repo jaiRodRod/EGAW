@@ -18,13 +18,14 @@
 //==============================================================================
 /*
 */
-class PlayerControlGrid  : public juce::Component, public juce::Value::Listener
+class PlayerControlGrid  : public juce::Component, public juce::ValueTree::Listener
 {
 public:
-    PlayerControlGrid(juce::ValueTree&);
+    PlayerControlGrid(juce::ValueTree&, juce::ValueTree&);
     ~PlayerControlGrid() override;
 
-    void valueChanged(juce::Value&) override;
+    //void valueChanged(juce::Value&) override;
+    void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -36,7 +37,8 @@ private:
     void stopButtonClicked();
 
 
-    juce::ValueTree& projectData;
+    juce::ValueTree projectData;
+    juce::ValueTree playheadState;
 
     juce::TextButton playButton;
     juce::TextButton stopButton;

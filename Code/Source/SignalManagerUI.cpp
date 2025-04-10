@@ -10,29 +10,59 @@
 
 #include "SignalManagerUI.h"
 
-JUCE_IMPLEMENT_SINGLETON(SignalManagerUI);
-
-SignalManagerUI::SignalManagerUI()
+SignalManagerUI& SignalManagerUI::getInstance()
 {
-    signalValue = static_cast<int>(Signal::NULL_SIGNAL);
+    static SignalManagerUI instance;
+    return instance;
 }
 
-SignalManagerUI::Signal SignalManagerUI::getCurrentSignal() const
+SignalManagerUI::SignalManagerUI() = default;
+SignalManagerUI::~SignalManagerUI() { cancelPendingUpdate(); }
+
+void SignalManagerUI::setSignalInternal(int newSignal)
 {
-    return static_cast<Signal>(static_cast<int>(signalValue.getValue()));
+    bool needsTrigger = false;
+    {
+        const juce::ScopedLock lock(queueLock);
+        if (signalQueue.empty() || signalQueue.back() != newSignal)
+        {
+            signalQueue.push_back(newSignal);
+            needsTrigger = !notificationPending.exchange(true);
+        }
+    }
+
+    if (needsTrigger)
+        triggerAsyncUpdate();
 }
 
-void SignalManagerUI::setSignal(Signal newSignal)
+void SignalManagerUI::handleAsyncUpdate()
 {
-    signalValue = static_cast<int>(newSignal);
+    std::deque<int> localQueue;
+    {
+        const juce::ScopedLock lock(queueLock);
+        localQueue.swap(signalQueue);
+        notificationPending.store(false);
+    }
+
+    // Process on message thread
+    juce::MessageManager::callAsync([this, localQueue = std::move(localQueue)]()
+        {
+            for (const auto signal : localQueue)
+            {
+                SignalMessage msg(signal); // Properly constructed
+                listeners.call([&msg](juce::MessageListener& l) {
+                    l.handleMessage(msg); // Correct message passing
+                    });
+            }
+        });
 }
 
-void SignalManagerUI::addListener(juce::Value::Listener* listener)
+void SignalManagerUI::addListener(juce::MessageListener* listener)
 {
-    signalValue.addListener(listener);
+    listeners.add(listener);
 }
 
-void SignalManagerUI::removeListener(juce::Value::Listener* listener)
+void SignalManagerUI::removeListener(juce::MessageListener* listener)
 {
-    signalValue.removeListener(listener);
+    listeners.remove(listener);
 }

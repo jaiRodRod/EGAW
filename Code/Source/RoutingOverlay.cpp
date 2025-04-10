@@ -31,13 +31,6 @@ RoutingOverlay::~RoutingOverlay()
 
 void RoutingOverlay::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
     g.fillAll (juce::Colours::transparentBlack);
 }
 
@@ -89,7 +82,7 @@ void RoutingOverlay::mouseDown(const juce::MouseEvent& event)
         else
         {
             DBG("Clicked outside button.");
-            RoutingActionStateManager::getInstance()->setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
+            RoutingActionStateManager::getInstance().setState(RoutingActionStateManager::RoutingState::ROUTING_OFF);
         }
     }
 }

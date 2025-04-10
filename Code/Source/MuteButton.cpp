@@ -14,7 +14,7 @@
 //==============================================================================
 MuteButton::MuteButton(juce::ValueTree& channelSettings) : juce::ToggleButton(), channelSettings(channelSettings)
 {
-    SignalManagerUI::getInstance()->addListener(this);
+    SignalManagerUI::getInstance().addListener(this);
 
     setToggleable(true);
     setToggleState(channelSettings.getProperty("Mute"), false);
@@ -24,20 +24,23 @@ MuteButton::MuteButton(juce::ValueTree& channelSettings) : juce::ToggleButton(),
 
 MuteButton::~MuteButton()
 {
-    SignalManagerUI::getInstance()->removeListener(this);
+    SignalManagerUI::getInstance().removeListener(this);
 }
 
-void MuteButton::valueChanged(juce::Value& value)
+void MuteButton::handleMessage(const juce::Message& message)
 {
-    auto signal = SignalManagerUI::getInstance()->getCurrentSignal();
+    if (auto* signalMsg = dynamic_cast<const SignalMessage*>(&message)) {
+        auto signal = static_cast<SignalManagerUI::Signal>(signalMsg->getSignalType());
+        // Handle signal (already on message thread)...
 
-    switch (signal)
-    {
+        switch (signal)
+        {
         case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
             setToggleState(channelSettings.getProperty("Mute"), false);
             break;
         default:
             break;
+        }
     }
 }
 
@@ -45,26 +48,3 @@ void MuteButton::setMute(bool muteButtonToggleState)
 {
     channelSettings.setProperty("Mute", muteButtonToggleState, nullptr);
 }
-
-/*
-void MuteButton::paint (juce::Graphics& g)
-{
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("MuteButton", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
-}
-
-void MuteButton::resized()
-{
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-}
-*/

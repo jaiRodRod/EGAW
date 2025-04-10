@@ -11,8 +11,9 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "SignalMessage.h"
 
-class SignalManagerUI : public juce::Value::Listener
+class SignalManagerUI : public juce::AsyncUpdater
 {
 public:
 
@@ -37,24 +38,27 @@ public:
         ADD_MIX_BUS_CHANNEL,
     };
 
-    Signal getCurrentSignal() const;
-    void setSignal(Signal newSignal);
-    void addListener(juce::Value::Listener* listener);
-    void removeListener(juce::Value::Listener* listener);
+    static SignalManagerUI& getInstance();
 
-    juce::Value getValue() { return signalValue; };
+    void setSignal(Signal newSignal) {
+        setSignalInternal(static_cast<int>(newSignal));
+    };
 
-    JUCE_DECLARE_SINGLETON(SignalManagerUI, true);
+    void addListener(juce::MessageListener* listener);
+    void removeListener(juce::MessageListener* listener);
 
 private:
-
     SignalManagerUI();
+    ~SignalManagerUI() override;
 
-    void valueChanged(juce::Value& value) override
-    {
-        //Se declara para deshacer la abstraccion pero no se utilizará nada
-    }
+    void setSignalInternal(int signalId);
 
+    void handleAsyncUpdate() override;
 
-    juce::Value signalValue;
+    juce::ThreadSafeListenerList<juce::MessageListener> listeners;
+    juce::CriticalSection queueLock;
+    std::deque<int> signalQueue; // Stores raw signal IDs
+    std::atomic<bool> notificationPending{ false };
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SignalManagerUI)
 };

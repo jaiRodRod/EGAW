@@ -31,7 +31,7 @@ MixBusChannelUI::MixBusChannelUI(juce::ValueTree& projectData, juce::String chan
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-    RoutingActionStateManager::getInstance()->addListener(this);
+    RoutingActionStateManager::getInstance().addListener(this);
 
     addAndMakeVisible(channelColourSelector);
 
@@ -58,15 +58,17 @@ MixBusChannelUI::MixBusChannelUI(juce::ValueTree& projectData, juce::String chan
 
 MixBusChannelUI::~MixBusChannelUI()
 {
-    RoutingActionStateManager::getInstance()->removeListener(this);
+    RoutingActionStateManager::getInstance().removeListener(this);
 }
 
-void MixBusChannelUI::valueChanged(juce::Value& value)
+void MixBusChannelUI::handleMessage(const juce::Message& message)
 {
-    auto state = RoutingActionStateManager::getInstance()->getCurrentState();
-
-    switch (state)
+    if (const auto* routingMsg = dynamic_cast<const RoutingMessage*>(&message))
     {
+        const auto state = static_cast<RoutingActionStateManager::RoutingState>(routingMsg->routingState);
+
+        switch (state)
+        {
         case RoutingActionStateManager::RoutingState::ROUTING_ON:
             if (!originAlreadyRoutedIn())
                 routeIn.setEnabled(true);
@@ -83,6 +85,7 @@ void MixBusChannelUI::valueChanged(juce::Value& value)
             break;
         default:
             break;
+        }
     }
 }
 
@@ -128,7 +131,7 @@ juce::String MixBusChannelUI::getChannelUuid()
 bool MixBusChannelUI::originAlreadyRoutedIn()
 {
 
-    auto originChannelUuid = RoutingActionStateManager::getInstance()->getOriginChannelUuid();
+    auto originChannelUuid = RoutingActionStateManager::getInstance().getOriginChannelUuid();
     auto thisUuid = getChannelUuid();
 
     if (thisUuid == originChannelUuid)

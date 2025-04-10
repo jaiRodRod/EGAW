@@ -9,15 +9,20 @@
 */
 
 #pragma once
-
 #include <JuceHeader.h>
+#include <unordered_set>
 
-class RoutingActionStateManager : public juce::Value::Listener
+class RoutingMessage : public juce::Message
 {
 public:
+    explicit RoutingMessage(int state) : routingState(state) {}
+    const int routingState;
+};
 
-    enum class RoutingState
-    {
+class RoutingActionStateManager : public juce::AsyncUpdater
+{
+public:
+    enum class RoutingState {
         ROUTING_OFF,
         ROUTING_ON,
         COMPLETED_ROUTING,
@@ -26,36 +31,44 @@ public:
         VIEWING_ROUTES
     };
 
-    //Routing off es cuando no se usa nada de routing
-    //Routing on es cuando se va a enrutar un canal y se hace con click izquierdo sobre la clavija
-    //Removing route es cuando se va a desentutar un canal y se hace con click derecho sobre la clavija
-    //Viewing routes se hace para ver a que canales se enruta el canal con el simbolo del ojito sobre la clavija, se hace sobre el originChannel
+    static RoutingActionStateManager& getInstance();
 
-    RoutingState getCurrentState() const;
+    // Thread-safe state access
+    RoutingState getCurrentState() const noexcept;
     void setState(RoutingState newState);
-    void addListener(juce::Value::Listener* listener);
-    void removeListener(juce::Value::Listener* listener);
-    juce::Value getValue() { return state; };
 
-    juce::String getOriginChannelUuid();
-    void setOriginChannelUuid(juce::String originChannelUuid);
-    juce::String getDestinyChannelUuid();
-    void setDestinyChannelUuid(juce::String destinyChannelUuid);
+    // Thread-safe listener management
+    void addListener(juce::MessageListener* listener);
+    void removeListener(juce::MessageListener* listener);
+
+    // Thread-safe string access
+    juce::String getOriginChannelUuid() const;
+    void setOriginChannelUuid(const juce::String& uuid);
+    juce::String getDestinyChannelUuid() const;
+    void setDestinyChannelUuid(const juce::String& uuid);
 
     void routingOff();
 
-    JUCE_DECLARE_SINGLETON(RoutingActionStateManager, true);
-
 private:
-
     RoutingActionStateManager();
+    ~RoutingActionStateManager() override;
 
-    void valueChanged(juce::Value& value) override
-    {
-        //Se declara para deshacer la abstraccion pero no se utilizará nada
-    }
+    void handleAsyncUpdate() override;
 
-    juce::Value state;
+    // State management
+    std::atomic<RoutingState> currentState{ RoutingState::ROUTING_OFF };
+    std::deque<RoutingState> stateQueue;
+    std::atomic<bool> notificationPending{ false };
+
+    // String storage
+    juce::CriticalSection stringLock;
     juce::String originChannelUuid;
     juce::String destinyChannelUuid;
+
+    // Listener management
+    juce::ThreadSafeListenerList<juce::MessageListener> listeners;
+    std::unordered_set<juce::MessageListener*> activeListeners;
+    juce::CriticalSection activeListenersLock;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RoutingActionStateManager)
 };

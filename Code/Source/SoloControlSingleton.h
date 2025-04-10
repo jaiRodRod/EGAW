@@ -36,6 +36,7 @@ public:
 private:
 
     SoloControlSingleton();
+    ~SoloControlSingleton() { clearSingletonInstance(); };
 
     void valueChanged(juce::Value& value) override
     {

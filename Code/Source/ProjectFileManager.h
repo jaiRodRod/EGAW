@@ -13,14 +13,14 @@
 #include "SignalManagerUI.h"
 #include "SoloControlSingleton.h"
 
-class ProjectFileManager : public juce::Value::Listener
+class ProjectFileManager : public juce::MessageListener
 {
 public:
 
     ProjectFileManager(juce::ValueTree&, juce::ValueTree&);
     ~ProjectFileManager();
 
-    void valueChanged(juce::Value&) override;
+	void handleMessage(const juce::Message& message) override;
 
 private:
 

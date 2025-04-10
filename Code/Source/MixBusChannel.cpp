@@ -92,7 +92,7 @@ void MixBusChannel::getNextAudioBlock(const juce::AudioSourceChannelInfo& buffer
 
         if ((!channelMute) && ((!isGlobalSoloActive) || (isGlobalSoloActive && channelSolo)))
         {
-            DBG("IN MIX BUS");
+            //DBG("IN MIX BUS");
             gain.process(juce::dsp::ProcessContextReplacing<float>(block));
             pan.process(juce::dsp::ProcessContextReplacing<float>(block));
         }

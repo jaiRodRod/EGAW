@@ -50,20 +50,20 @@ void EgawMenuBarModel::menuItemSelected(int menuItemID, int ropLevelMenuIndex)
 
 void EgawMenuBarModel::fileLoadAction()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::LOAD_FILE);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::LOAD_FILE);
 }
 
 void EgawMenuBarModel::fileSaveAction()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::SAVE_FILE);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::SAVE_FILE);
 }
 
 void EgawMenuBarModel::fileSaveAsAction()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::SAVE_AS_FILE);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::SAVE_AS_FILE);
 }
 
 void EgawMenuBarModel::fileRenderAction()
 {
-    SignalManagerUI::getInstance()->setSignal(SignalManagerUI::Signal::RUN_EXPORT_PROCESS);
+    SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RUN_EXPORT_PROCESS);
 }

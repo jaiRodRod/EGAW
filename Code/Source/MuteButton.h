@@ -16,7 +16,7 @@
 //==============================================================================
 /*
 */
-class MuteButton : public juce::ToggleButton, public juce::Value::Listener
+class MuteButton : public juce::ToggleButton, public juce::MessageListener
 {
 public:
 
@@ -25,8 +25,7 @@ public:
 
     //void paint (juce::Graphics&) override;
     //void resized() override;
-
-    void valueChanged(juce::Value& value) override; 
+	void handleMessage(const juce::Message& message) override;
 
 private:
 

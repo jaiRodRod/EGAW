@@ -20,7 +20,7 @@
 //==============================================================================
 /*
 */
-class MixerChannelsView  : public juce::Component, public juce::ValueTree::Listener, public juce::Value::Listener
+class MixerChannelsView  : public juce::Component, public juce::ValueTree::Listener, public juce::MessageListener
 {
 public:
     MixerChannelsView(juce::ValueTree&);
@@ -29,7 +29,7 @@ public:
     void valueTreeChildAdded (juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenAdded) override;
     void valueTreeChildRemoved (juce::ValueTree& parentTree, juce::ValueTree& childWhichHasBeenRemoved, int indexFromWhichChildWasRemoved) override;
     void valueTreeChildOrderChanged (juce::ValueTree& parentTreeWhoseChildrenHaveMoved, int oldIndex, int newIndex) override;
-    void valueChanged(juce::Value& value) override;
+	void handleMessage(const juce::Message& message) override;
 
     void paint (juce::Graphics&) override;
     void resized() override;

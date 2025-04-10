@@ -12,17 +12,27 @@
 #include "Footer.h"
 
 //==============================================================================
-Footer::Footer(juce::ValueTree& projectData) 
+Footer::Footer(juce::ValueTree& projectData, juce::ValueTree& playheadState) 
     : flexBox(juce::FlexBox::Direction::row, juce::FlexBox::Wrap::noWrap
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
     , projectData(projectData)
-    , playerControlGrid(projectData)
+    , playheadState(playheadState)
+    , viewSelectorColumn(projectData)
+    , playerControlGrid(projectData, playheadState)
+    , timeViewer(playheadState)
+	, playlistZoomComponent(projectData)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
+    addAndMakeVisible(viewSelectorColumn);
+
     addAndMakeVisible(playerControlGrid);
+
+    addAndMakeVisible(timeViewer);
+
+	addAndMakeVisible(playlistZoomComponent);
 }
 
 Footer::~Footer()
@@ -44,8 +54,15 @@ void Footer::resized()
 
     flexBox.items.clear();
 
+    auto viewSelectorWidth = (float)((footerBounds.getWidth() / 12) * 1);
+    flexBox.items.add(juce::FlexItem(viewSelectorColumn).withMinHeight((float)footerBounds.getHeight()).withMinWidth(viewSelectorWidth));
+
     auto playerControlWidth = (float) ((footerBounds.getWidth() / 12) * 5);
     flexBox.items.add(juce::FlexItem(playerControlGrid).withMinHeight((float) footerBounds.getHeight()).withMinWidth(playerControlWidth));
+
+    flexBox.items.add(juce::FlexItem(timeViewer).withMinHeight((float)footerBounds.getHeight()).withMinWidth(viewSelectorWidth));
+
+	flexBox.items.add(juce::FlexItem(playlistZoomComponent).withMinHeight((float)footerBounds.getHeight()).withMinWidth(viewSelectorWidth));
 
     flexBox.performLayout(footerBounds);
 }
