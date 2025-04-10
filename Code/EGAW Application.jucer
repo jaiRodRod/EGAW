@@ -27,8 +27,20 @@
         <FILE id="BYah1A" name="SignalMessage.h" compile="0" resource="0" file="Source/SignalMessage.h"/>
       </GROUP>
       <GROUP id="{78C3C251-8374-3633-E37B-FFED66427753}" name="UserInterface">
+        <GROUP id="{9093FFCE-310E-D8ED-6916-DD8B279B90BC}" name="Utils">
+          <FILE id="ktOBoK" name="BidirectionalLinkedViewport.h" compile="0"
+                resource="0" file="Source/BidirectionalLinkedViewport.h"/>
+        </GROUP>
         <GROUP id="{4C7D3674-EF41-A64F-BCD3-CE11F92BEBD2}" name="PlaylistInterface">
           <GROUP id="{43A8F985-39E9-F35B-5CE0-1FA6393E6026}" name="CustomComponents">
+            <FILE id="P2HJrs" name="AudioTimeAdjusterWindow.cpp" compile="1" resource="0"
+                  file="Source/AudioTimeAdjusterWindow.cpp"/>
+            <FILE id="kXSNzq" name="AudioTimeAdjusterWindow.h" compile="0" resource="0"
+                  file="Source/AudioTimeAdjusterWindow.h"/>
+            <FILE id="P3E7Vc" name="MuteSoloComponentPlaylist.cpp" compile="1"
+                  resource="0" file="Source/MuteSoloComponentPlaylist.cpp"/>
+            <FILE id="nedDYM" name="MuteSoloComponentPlaylist.h" compile="0" resource="0"
+                  file="Source/MuteSoloComponentPlaylist.h"/>
             <FILE id="RAwSE9" name="TransportComponent.cpp" compile="1" resource="0"
                   file="Source/TransportComponent.cpp"/>
             <FILE id="tGjbBG" name="TransportComponent.h" compile="0" resource="0"
@@ -45,10 +57,6 @@
                   resource="0" file="Source/AudioThumbnailChannelPlaylistUI.cpp"/>
             <FILE id="ppmaKK" name="AudioThumbnailChannelPlaylistUI.h" compile="0"
                   resource="0" file="Source/AudioThumbnailChannelPlaylistUI.h"/>
-            <FILE id="AAunx9" name="CustomScrollViewport.cpp" compile="1" resource="0"
-                  file="Source/CustomScrollViewport.cpp"/>
-            <FILE id="DK9KtH" name="CustomScrollViewport.h" compile="0" resource="0"
-                  file="Source/CustomScrollViewport.h"/>
           </GROUP>
           <FILE id="ln4JRI" name="PlaylistChannelsView.cpp" compile="1" resource="0"
                 file="Source/PlaylistChannelsView.cpp"/>
@@ -71,6 +79,10 @@
                 file="Source/PlayerControlGrid.cpp"/>
           <FILE id="jTMtNz" name="PlayerControlGrid.h" compile="0" resource="0"
                 file="Source/PlayerControlGrid.h"/>
+          <FILE id="BRoIys" name="PlaylistZoomComponent.cpp" compile="1" resource="0"
+                file="Source/PlaylistZoomComponent.cpp"/>
+          <FILE id="nlaD5l" name="PlaylistZoomComponent.h" compile="0" resource="0"
+                file="Source/PlaylistZoomComponent.h"/>
           <FILE id="hutWZx" name="TimeViewer.cpp" compile="1" resource="0" file="Source/TimeViewer.cpp"/>
           <FILE id="yrMd9v" name="TimeViewer.h" compile="0" resource="0" file="Source/TimeViewer.h"/>
           <FILE id="BrhPz4" name="ViewSelectorColumn.cpp" compile="1" resource="0"

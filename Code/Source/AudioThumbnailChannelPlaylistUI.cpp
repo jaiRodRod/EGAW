@@ -12,12 +12,14 @@
 #include "AudioThumbnailChannelPlaylistUI.h"
 
 //==============================================================================
-AudioThumbnailChannelPlaylistUI::AudioThumbnailChannelPlaylistUI(juce::ValueTree& projectData, juce::String channelUuid) 
+AudioThumbnailChannelPlaylistUI::AudioThumbnailChannelPlaylistUI(juce::ValueTree& projectData, juce::ValueTree& playheadState, juce::String channelUuid, GlobalPlayhead& globalPlayhead) 
     : projectData(projectData)
+	, playheadState(playheadState)
     , channelUuid(channelUuid)
+	, globalPlayhead(globalPlayhead)
     , formatManager() // Initialize the formatManager
     , thumbnailCache(5) // Cache size
-    , thumbnail(480, formatManager, thumbnailCache) // Pass formatManager to the thumbnail
+    , thumbnail((int)playheadState.getProperty("bufferSize"), formatManager, thumbnailCache) // Pass formatManager to the thumbnail
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -40,16 +42,73 @@ void AudioThumbnailChannelPlaylistUI::paint (juce::Graphics& g)
     g.fillAll (juce::Colour::fromString(colourID));
 
     // Draw the audio thumbnail
-    if (thumbnail.getNumChannels() > 0)
+    if (showAudioWave && thumbnail.getNumChannels() > 0)
     {
         g.setColour(juce::Colours::white);
-        thumbnail.drawChannels(g, getLocalBounds(), 0.0, thumbnail.getTotalLength(), 1.0f);
+		double audioFileStart = projectData.getChildWithName(channelUuid).getProperty("AudioFileStart", 0.0);
+		double audioFileEnd = projectData.getChildWithName(channelUuid).getProperty("AudioFileEnd", 0.0);
+
+        thumbnail.drawChannels(g, getLocalBounds(), audioFileStart, audioFileEnd, 1.0f); //CHECK
+    }
+    else
+    {
+        g.setColour(juce::Colours::red.withAlpha(0.5f));
+        g.drawRect(getLocalBounds(), 2);
     }
 }
 
 void AudioThumbnailChannelPlaylistUI::resized()
 {
     auto area = getLocalBounds();
+}
+
+void AudioThumbnailChannelPlaylistUI::mouseDown(const juce::MouseEvent& event)
+{
+    if (event.mods.isRightButtonDown())
+    {
+        juce::PopupMenu menu;
+
+        menu.addItem("Show Audio Wave",
+            true,  // can be ticked
+            showAudioWave,  // current tick state
+            [this] { toggleShowAudioWave(); });
+
+		menu.addItem("Adjust Audio Time",
+			true,  // can be ticked
+			false,  // current tick state
+			[this] {
+				audioTimeAdjusterCall();
+			});
+
+        menu.showMenuAsync(juce::PopupMenu::Options()
+            .withTargetComponent(this)
+            .withMousePosition());
+    }
+    else
+    {
+        originalStartTime = (double)projectData.getChildWithName(channelUuid).getProperty("StartTime", 0.0);
+    }
+}
+
+void AudioThumbnailChannelPlaylistUI::mouseDrag(const juce::MouseEvent& event)
+{
+    auto sampleRate = (double)playheadState.getProperty("sampleRate");
+
+    auto dragStartPoint = event.getMouseDownPosition().getX();
+    auto dragStartPosInSeconds = (double)dragStartPoint / (double)projectData.getProperty("Zoom");
+
+    auto draggedDistanceX = event.getDistanceFromDragStartX();
+    auto distanceInSeconds = (double)draggedDistanceX / (double)projectData.getProperty("Zoom");
+    
+	auto newStartTime = originalStartTime + distanceInSeconds;
+    if (newStartTime < 0)
+    {
+		newStartTime = 0;
+	}
+
+    projectData.getChildWithName(channelUuid).setProperty("StartTime", newStartTime, nullptr);
+
+	repaint();
 }
 
 juce::String AudioThumbnailChannelPlaylistUI::getChannelUuid()
@@ -60,4 +119,41 @@ juce::String AudioThumbnailChannelPlaylistUI::getChannelUuid()
 double AudioThumbnailChannelPlaylistUI::getThumbnailTotalLength()
 {
     return thumbnail.getTotalLength();
+}
+
+void AudioThumbnailChannelPlaylistUI::toggleShowAudioWave()
+{
+	showAudioWave = !showAudioWave;
+	repaint();
+}
+
+void AudioThumbnailChannelPlaylistUI::audioTimeAdjusterCall()
+{
+    auto audioFileStart = projectData.getChildWithName(channelUuid).getProperty("AudioFileStart", 0.0);
+    auto audioFileEnd = projectData.getChildWithName(channelUuid).getProperty("AudioFileEnd", 0.0);
+    auto audioFileLength = projectData.getChildWithName(channelUuid).getProperty("AudioFileLength", 0.0);
+
+    showAudioTimeAdjusterPopup(audioFileStart, audioFileEnd, audioFileLength,
+        [this](double newStart, double newEnd, bool accepted) {
+            if (accepted)
+            {
+                auto audioFileLength = (double)projectData.getChildWithName(channelUuid).getProperty("AudioFileLength", 0.0);
+				if (newStart < 0)
+				{
+					newStart = 0;
+				}
+                if (newEnd > audioFileLength)
+                {
+					newEnd = audioFileLength;
+                }
+                projectData.getChildWithName(channelUuid).setProperty("AudioFileStart", newStart, nullptr);
+                projectData.getChildWithName(channelUuid).setProperty("AudioFileEnd", newEnd, nullptr);
+
+                if (auto* parent = getParentComponent())
+                {
+                    parent->resized();
+                    repaint();
+                }
+            }
+        });
 }

@@ -12,6 +12,10 @@
 
 #include <JuceHeader.h>
 
+#include "ChannelColourSelector.h"
+#include "ChannelNameLabel.h"
+#include "MuteSoloComponentPlaylist.h"
+
 //==============================================================================
 /*
 */
@@ -32,6 +36,9 @@ private:
     juce::String channelUuid;
 
     juce::FlexBox flexContainer;
+	ChannelColourSelector channelColourSelector;
+    ChannelNameLabel channelNameLabel;
+    MuteSoloComponentPlaylist muteSoloComponentPlaylist;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioChannelPlaylistUI)
 };

@@ -28,7 +28,7 @@
 class UserInterfaceManager : public juce::Component, public juce::ValueTree::Listener, public juce::MessageListener
 {
 public:
-    UserInterfaceManager(juce::ValueTree&, juce::ValueTree&);
+    UserInterfaceManager(juce::ValueTree&, juce::ValueTree&, GlobalPlayhead&);
     ~UserInterfaceManager() override;
 
     void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;

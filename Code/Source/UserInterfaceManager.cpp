@@ -13,7 +13,7 @@
 
 
 //==============================================================================
-UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData, juce::ValueTree& playheadState) 
+UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData, juce::ValueTree& playheadState, GlobalPlayhead& globalPlayhead) 
     : menuBarModel()
     , menuBarComponent(&menuBarModel)
     , projectData(projectData)
@@ -21,7 +21,7 @@ UserInterfaceManager::UserInterfaceManager(juce::ValueTree& projectData, juce::V
     , footer(projectData, playheadState)
     , selectedView(2)
     , mixerView(projectData)
-    , playlistView(projectData, playheadState)
+    , playlistView(projectData, playheadState, globalPlayhead)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -87,7 +87,9 @@ void UserInterfaceManager::handleMessage(const juce::Message& message)
             break;
         case SignalManagerUI::Signal::REBUILD_UI:
             rebuildUI();
-            SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
+            juce::MessageManager::callAsync([this] {
+                SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESTORE_UI_PARAMETERS);
+            });
             break;
         case SignalManagerUI::Signal::RESTORE_UI_PARAMETERS:
             SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);

@@ -17,8 +17,13 @@ AudioChannelPlaylistUI::AudioChannelPlaylistUI(juce::ValueTree& projectData, juc
         , juce::FlexBox::AlignContent::flexStart, juce::FlexBox::AlignItems::flexStart
         , juce::FlexBox::JustifyContent::flexStart)
     , projectData(projectData), channelUuid(channelUuid)
+	, channelColourSelector(projectData.getChildWithName(channelUuid))
+	, channelNameLabel(projectData.getChildWithName(channelUuid))
+	, muteSoloComponentPlaylist(projectData, channelUuid)
 {
-    
+	addAndMakeVisible(channelColourSelector);
+	addAndMakeVisible(channelNameLabel);
+	addAndMakeVisible(muteSoloComponentPlaylist);
 }
 
 AudioChannelPlaylistUI::~AudioChannelPlaylistUI()
@@ -36,6 +41,10 @@ void AudioChannelPlaylistUI::resized()
     auto area = getLocalBounds();
 
     flexContainer.items.clear();
+
+	flexContainer.items.add(juce::FlexItem(channelColourSelector).withHeight((float)area.getHeight()).withWidth(area.getWidth() * 0.25f));
+	flexContainer.items.add(juce::FlexItem(channelNameLabel).withHeight((float)area.getHeight()).withWidth(area.getWidth() * 0.5f));
+	flexContainer.items.add(juce::FlexItem(muteSoloComponentPlaylist).withHeight((float)area.getHeight()).withWidth(area.getWidth() * 0.25f));
 
     flexContainer.performLayout(area);
 }

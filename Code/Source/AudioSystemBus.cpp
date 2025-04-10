@@ -413,7 +413,7 @@ void AudioSystemBus::restoreProjectData()
     projectData.setProperty("saveFilePath", fileRestoreProjectData.getProperty("saveFilePath"), nullptr);
     projectData.setProperty("projectName", fileRestoreProjectData.getProperty("projectName"), nullptr);
     projectData.setProperty("View", fileRestoreProjectData.getProperty("View"), nullptr); //SETEA LA VISTA ACTUAL
-
+	projectData.setProperty("Zoom", fileRestoreProjectData.getProperty("Zoom"), nullptr); //SETEA EL ZOOM ACTUAL
 
     projectData.appendChild(channelOrder, nullptr);
 

@@ -14,6 +14,7 @@
 #include "PlayerControlGrid.h"
 #include "ViewSelectorColumn.h"
 #include "TimeViewer.h"
+#include "PlaylistZoomComponent.h"
 
 #define MENU_BACKGROUND_COLOUR_ID 0
 
@@ -37,6 +38,7 @@ private:
     ViewSelectorColumn viewSelectorColumn;
     PlayerControlGrid playerControlGrid;
     TimeViewer timeViewer;
+	PlaylistZoomComponent playlistZoomComponent;
     juce::FlexBox flexBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Footer)

@@ -8,7 +8,7 @@ MainComponent::MainComponent()
     , fileRestoreProjectData("RestorerValueTree")
     , globalPlayhead()
     , audioSystemBus(deviceManager.getAudioDeviceSetup(), projectData, fileRestoreProjectData, globalPlayhead)
-    , userInterfaceManager(projectData, globalPlayhead.getState())
+    , userInterfaceManager(projectData, globalPlayhead.getState(), globalPlayhead)
     , projectFileManager(projectData, fileRestoreProjectData)
 {
 
@@ -48,6 +48,7 @@ MainComponent::MainComponent()
 
     auto currentSetup = deviceManager.getAudioDeviceSetup();
     globalPlayhead.setSampleRate(currentSetup.sampleRate);
+    globalPlayhead.setBufferSize(currentSetup.bufferSize);
     juce::Logger::writeToLog("Sample Rate: " + juce::String(currentSetup.sampleRate));
     juce::Logger::writeToLog("Buffer Size: " + juce::String(currentSetup.bufferSize));
 

@@ -54,6 +54,10 @@ AudioChannel::AudioChannel(GlobalPlayhead& globalPlayhead, juce::String& optiona
     settings.setProperty("StartTime", restorerValueTree.getProperty("StartTime"), nullptr);
     setStartTime(settings.getProperty("StartTime"));
 
+    settings.setProperty("AudioFileStart", restorerValueTree.getProperty("AudioFileStart"), nullptr);
+    settings.setProperty("AudioFileEnd", restorerValueTree.getProperty("AudioFileEnd"), nullptr);
+    settings.setProperty("AudioFileLength", restorerValueTree.getProperty("AudioFileLength"), nullptr);
+
     settings.setProperty("Colour", restorerValueTree.getProperty("Colour"), nullptr);
     settings.setProperty("Name", restorerValueTree.getProperty("Name"), nullptr);
 
@@ -132,6 +136,19 @@ bool AudioChannel::loadFileInternal(const juce::File& audioFile)
         {
             settings.setProperty("Name", currentFile.getFileNameWithoutExtension(), nullptr);
         }
+        if (!settings.hasProperty("AudioFileStart"))
+        {
+			settings.setProperty("AudioFileStart", 0.0f, nullptr);
+        }
+		if (!settings.hasProperty("AudioFileEnd"))
+		{
+			settings.setProperty("AudioFileEnd", (double)reader->lengthInSamples / fileSampleRate, nullptr);
+		}
+        if (!settings.hasProperty("AudioFileLength"))
+        {
+            settings.setProperty("AudioFileLength", (double)reader->lengthInSamples / fileSampleRate, nullptr);
+        }
+
         return true;
     }
     return false;  // No se pudo cargar el archivo
@@ -164,10 +181,17 @@ void AudioChannel::releaseResources()
 void AudioChannel::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
     const juce::int64 globalPosition = globalPlayhead.getPlayheadPosition();
+	const double audioFileStartSamples = (double)settings.getProperty("AudioFileStart") * sampleRate;
+	const double audioFileEndSamples = (double)settings.getProperty("AudioFileEnd") * sampleRate;
 
-    if (isPrepared && readerSource && globalPosition >= startSample.load())
+    if (isPrepared 
+        && readerSource 
+        && globalPosition >= startSample.load() 
+        && ((globalPosition - startSample.load() + audioFileStartSamples) <= audioFileEndSamples)
+        )
     {
-        const juce::int64 startInSource = globalPosition - startSample.load();
+        const juce::int64 startInSource = globalPosition - startSample.load() + audioFileStartSamples;
+
         //readerSource->setNextReadPosition(startInSource);
         //readerSource->getNextAudioBlock(bufferToFill);
         setNextReadPosition(startInSource);
@@ -251,6 +275,7 @@ void AudioChannel::setLooping(bool shouldLoop)
 void AudioChannel::setStartTime(double seconds)
 {
     startSample.store(static_cast<juce::int64>(seconds * sampleRate));
+	globalPlayhead.contestForTimeLength(startSample.load() + getTotalLength());
 }
 
 juce::ValueTree& AudioChannel::getValueTree()
@@ -281,6 +306,11 @@ void AudioChannel::valueTreePropertyChanged(juce::ValueTree& treeWhosePropertyHa
         {
             panValue = (float)settings.getProperty(property);
             pan.setPan(panValue);
+        }
+        if (property.toString() == "StartTime")
+        {
+            auto startTime = (float)settings.getProperty(property);
+			setStartTime(startTime);
         }
     }
 }

@@ -21,6 +21,7 @@ Footer::Footer(juce::ValueTree& projectData, juce::ValueTree& playheadState)
     , viewSelectorColumn(projectData)
     , playerControlGrid(projectData, playheadState)
     , timeViewer(playheadState)
+	, playlistZoomComponent(projectData)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
@@ -30,6 +31,8 @@ Footer::Footer(juce::ValueTree& projectData, juce::ValueTree& playheadState)
     addAndMakeVisible(playerControlGrid);
 
     addAndMakeVisible(timeViewer);
+
+	addAndMakeVisible(playlistZoomComponent);
 }
 
 Footer::~Footer()
@@ -58,6 +61,8 @@ void Footer::resized()
     flexBox.items.add(juce::FlexItem(playerControlGrid).withMinHeight((float) footerBounds.getHeight()).withMinWidth(playerControlWidth));
 
     flexBox.items.add(juce::FlexItem(timeViewer).withMinHeight((float)footerBounds.getHeight()).withMinWidth(viewSelectorWidth));
+
+	flexBox.items.add(juce::FlexItem(playlistZoomComponent).withMinHeight((float)footerBounds.getHeight()).withMinWidth(viewSelectorWidth));
 
     flexBox.performLayout(footerBounds);
 }

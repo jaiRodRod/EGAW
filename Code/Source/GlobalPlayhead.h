@@ -28,21 +28,20 @@ public:
     double getSampleRate() const;
     void setSampleRate(double newSampleRate);
 
+    double getBufferSize() const;
+    void setBufferSize(double newBufferSize);
+
     void contestForTimeLength(juce::int64 numSamples);
     juce::ValueTree& getState() { return playheadState; };
     void setIsPlaying(bool);
 
-    /*
-    double getTimeLengthSeconds() { return time.inSeconds(); };
-
-    double getRealAudioTime() { return realAudioTime.inSeconds(); };
-    */
     //JUCE_DECLARE_SINGLETON(GlobalPlayhead, false);
 
 private:
 
     std::atomic<juce::int64> globalPlayhead{ 0 };
     std::atomic<double> sampleRate { 48000 };
+	std::atomic<double> bufferSize{ 512 };
 
     juce::ValueTree playheadState;
 

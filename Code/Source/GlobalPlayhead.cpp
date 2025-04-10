@@ -10,8 +10,6 @@
 
 #include "GlobalPlayhead.h"
 
-//JUCE_IMPLEMENT_SINGLETON(GlobalPlayhead);
-
 GlobalPlayhead::GlobalPlayhead() : playheadState("GlobalPlayhead")
 {
     playheadState.setProperty("time", 300, nullptr);
@@ -19,6 +17,7 @@ GlobalPlayhead::GlobalPlayhead() : playheadState("GlobalPlayhead")
     playheadState.setProperty("position", 0, nullptr);
     playheadState.setProperty("isPlaying", false, nullptr);
     playheadState.setProperty("sampleRate", getSampleRate(), nullptr);
+    playheadState.setProperty("bufferSize", getBufferSize(), nullptr);
     startTimerHz(30);
 }
 
@@ -71,6 +70,22 @@ void GlobalPlayhead::setSampleRate(double newSampleRate)
     DBG("SAMPLE RATE SET: " << newSampleRate);
 }
 
+double GlobalPlayhead::getBufferSize() const
+{
+    return bufferSize.load();
+}
+
+void GlobalPlayhead::setBufferSize(double newBufferSize)
+{
+    bufferSize.store(newBufferSize, std::memory_order_release);
+
+    juce::MessageManager::callAsync([this, newBufferSize] {
+        playheadState.setProperty("bufferSize", newBufferSize, nullptr);
+    });
+
+    DBG("BUFFER SIZE SET: " << newBufferSize);
+}
+
 void GlobalPlayhead::contestForTimeLength(juce::int64 numSamples)
 {
     auto contestantTime = juce::RelativeTime( ((double) numSamples) / sampleRate);
@@ -80,6 +95,7 @@ void GlobalPlayhead::contestForTimeLength(juce::int64 numSamples)
         juce::MessageManager::callAsync([this, contestantTime] {
             playheadState.setProperty("realAudioTime", contestantTime.inSeconds(), nullptr);
             playheadState.setProperty("time", contestantTime.inSeconds() + 300, nullptr); // 5 minutos de margen
+			SignalManagerUI::getInstance().setSignal(SignalManagerUI::Signal::RESIZED_TRIGGER);
         });
     }
 }

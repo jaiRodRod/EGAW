@@ -22,7 +22,7 @@
 class TransportBoxComponent  : public juce::Component, public juce::ValueTree::Listener
 {
 public:
-    TransportBoxComponent(juce::ValueTree&, juce::ValueTree&);
+    TransportBoxComponent(juce::ValueTree&, juce::ValueTree&, GlobalPlayhead&);
     ~TransportBoxComponent() override;
 
     void valueTreePropertyChanged (juce::ValueTree& treeWhosePropertyHasChanged, const juce::Identifier& property) override;
@@ -36,6 +36,7 @@ private:
 
     juce::ValueTree projectData;
     juce::ValueTree playheadState;
+	GlobalPlayhead& globalPlayhead;
 
     int transportViewPosition;
     TransportComponent transportComponent;
