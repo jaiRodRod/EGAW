@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="rWysCs" name="EGAW_SimpleVerb" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildVST3"
+              pluginVST3Category="Fx,Reverb" pluginAAXCategory="8">
+  <MAINGROUP id="eAdZ4B" name="EGAW_SimpleVerb">
+    <GROUP id="{DC4D7DAE-F7D9-8291-B436-3F439ED9D86B}" name="Source">
+      <FILE id="oIVw0A" name="ColourConstants.h" compile="0" resource="0"
+            file="Source/ColourConstants.h"/>
+      <GROUP id="{162D14CE-4C44-4326-4F1A-E3DF24EA894C}" name="LookAndFeel">
+        <FILE id="MSXkj5" name="VerticalFader_LF.h" compile="0" resource="0"
+              file="Source/VerticalFader_LF.h"/>
+      </GROUP>
+      <GROUP id="{BCB494C7-A4AE-1700-9486-563FE7A0B572}" name="Components">
+        <FILE id="qECv75" name="DampingComponent.cpp" compile="1" resource="0"
+              file="Source/DampingComponent.cpp"/>
+        <FILE id="qIkc0H" name="DampingComponent.h" compile="0" resource="0"
+              file="Source/DampingComponent.h"/>
+        <FILE id="XKx7vn" name="DampingSlider.cpp" compile="1" resource="0"
+              file="Source/DampingSlider.cpp"/>
+        <FILE id="pwbqnr" name="DampingSlider.h" compile="0" resource="0" file="Source/DampingSlider.h"/>
+        <FILE id="ET0l2K" name="DrySlider.cpp" compile="1" resource="0" file="Source/DrySlider.cpp"/>
+        <FILE id="xAHybg" name="DrySlider.h" compile="0" resource="0" file="Source/DrySlider.h"/>
+        <FILE id="DSzRiJ" name="RoomSizeComponent.cpp" compile="1" resource="0"
+              file="Source/RoomSizeComponent.cpp"/>
+        <FILE id="yPMHJQ" name="RoomSizeComponent.h" compile="0" resource="0"
+              file="Source/RoomSizeComponent.h"/>
+        <FILE id="mIPJ4z" name="RoomSizeSlider.cpp" compile="1" resource="0"
+              file="Source/RoomSizeSlider.cpp"/>
+        <FILE id="PfyopH" name="RoomSizeSlider.h" compile="0" resource="0"
+              file="Source/RoomSizeSlider.h"/>
+        <FILE id="GDxeb5" name="WetSlider.cpp" compile="1" resource="0" file="Source/WetSlider.cpp"/>
+        <FILE id="QBuVY9" name="WetSlider.h" compile="0" resource="0" file="Source/WetSlider.h"/>
+        <FILE id="Sn5NWq" name="WidthComponent.cpp" compile="1" resource="0"
+              file="Source/WidthComponent.cpp"/>
+        <FILE id="gULOId" name="WidthComponent.h" compile="0" resource="0"
+              file="Source/WidthComponent.h"/>
+        <FILE id="bAfzpD" name="WidthSlider.cpp" compile="1" resource="0" file="Source/WidthSlider.cpp"/>
+        <FILE id="igMbL1" name="WidthSlider.h" compile="0" resource="0" file="Source/WidthSlider.h"/>
+      </GROUP>
+      <FILE id="yqgT1A" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="Ak4JhU" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="zrTPj8" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="VK8jLP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="EGAW SingleVerb"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="EGAW_SimpleVerb"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../JUCE installation/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
