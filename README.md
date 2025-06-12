@@ -7,4 +7,5 @@ The objective is to build an useful audio workbench focused on mixing and master
 
 ## How to install it simplified? 🤔
 Installing the software has been made easy thanks to the installer. For standard users, you will just need to downlaod the installer executable and follow the installation instructions.
+
 For developers you will need to download JUCE from the official website and a code editor, i would personally recommend  Visual Studio 2022 with the C++ package, as it brings many facilities to synchronize your project with JUCE. You will need to open Projucer from JUCE folder and configure your library location, then you will be able to open the jucer project properly.
