@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="jGxCnk" name="EGAW Application" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" version="0.1">
+  <MAINGROUP id="ZKvsgm" name="EGAW Application">
+    <GROUP id="{D92BC2F2-4844-927F-0EAE-1C4C99ABF83D}" name="Source">
+      <FILE id="x5oGyl" name="EGAW_icon.png" compile="0" resource="1" file="EGAW_icon.png"/>
+      <FILE id="gpyX3K" name="EGAW_main.png" compile="0" resource="1" file="EGAW_main.png"/>
+      <FILE id="GrQvRd" name="EGAW_title.png" compile="0" resource="1" file="EGAW_title.png"/>
+      <FILE id="oMjngx" name="eyeClosed.svg" compile="0" resource="1" file="eyeClosed.svg"/>
+      <FILE id="MgSRWX" name="eyeOpen.svg" compile="0" resource="1" file="eyeOpen.svg"/>
+      <FILE id="EAhYXx" name="deleteCursor.png" compile="0" resource="1"
+            file="deleteCursor.png"/>
+      <FILE id="qlepFp" name="bypass.svg" compile="0" resource="1" file="bypass.svg"/>
+      <FILE id="fBFUeI" name="delete_icon.png" compile="0" resource="1" file="delete_icon.png"/>
+      <FILE id="PFhqda" name="palette_icon.png" compile="0" resource="1"
+            file="palette_icon.png"/>
+      <GROUP id="{0505B0FC-A672-346C-AD6B-6D32A837FF57}" name="Constants">
+        <FILE id="vDo2IW" name="ColourConstants.h" compile="0" resource="0"
+              file="Source/ColourConstants.h"/>
+        <FILE id="cf3Yys" name="ZoomConstants.h" compile="0" resource="0" file="Source/ZoomConstants.h"/>
+      </GROUP>
+      <GROUP id="{82DB6A44-8CE4-9DCE-9B6A-E76D07105F8E}" name="Utils">
+        <FILE id="HJYVle" name="ChannelRouteViewSingleton.cpp" compile="1"
+              resource="0" file="Source/ChannelRouteViewSingleton.cpp"/>
+        <FILE id="wYk2m5" name="ChannelRouteViewSingleton.h" compile="0" resource="0"
+              file="Source/ChannelRouteViewSingleton.h"/>
+        <FILE id="Rc8sm3" name="DisplaySingleton.cpp" compile="1" resource="0"
+              file="Source/DisplaySingleton.cpp"/>
+        <FILE id="O1x9SC" name="DisplaySingleton.h" compile="0" resource="0"
+              file="Source/DisplaySingleton.h"/>
+        <FILE id="NZvqIL" name="MixerInterfaceFocusSingleton.cpp" compile="1"
+              resource="0" file="Source/MixerInterfaceFocusSingleton.cpp"/>
+        <FILE id="LmPdlF" name="MixerInterfaceFocusSingleton.h" compile="0"
+              resource="0" file="Source/MixerInterfaceFocusSingleton.h"/>
+        <FILE id="xqfHMy" name="PluginActionStateManager.cpp" compile="1" resource="0"
+              file="Source/PluginActionStateManager.cpp"/>
+        <FILE id="r4yGdO" name="PluginActionStateManager.h" compile="0" resource="0"
+              file="Source/PluginActionStateManager.h"/>
+        <FILE id="JuOT25" name="ProjectFileManager.cpp" compile="1" resource="0"
+              file="Source/ProjectFileManager.cpp"/>
+        <FILE id="e3xr0x" name="ProjectFileManager.h" compile="0" resource="0"
+              file="Source/ProjectFileManager.h"/>
+        <FILE id="rT8yRn" name="RoutingActionStateManager.cpp" compile="1"
+              resource="0" file="Source/RoutingActionStateManager.cpp"/>
+        <FILE id="AOTWT3" name="RoutingActionStateManager.h" compile="0" resource="0"
+              file="Source/RoutingActionStateManager.h"/>
+        <FILE id="anXo9a" name="SignalManagerUI.cpp" compile="1" resource="0"
+              file="Source/SignalManagerUI.cpp"/>
+        <FILE id="uMsafJ" name="SignalManagerUI.h" compile="0" resource="0"
+              file="Source/SignalManagerUI.h"/>
+        <FILE id="BYah1A" name="SignalMessage.h" compile="0" resource="0" file="Source/SignalMessage.h"/>
+        <FILE id="Ei9eLD" name="StartSplashScreen.cpp" compile="1" resource="0"
+              file="Source/StartSplashScreen.cpp"/>
+        <FILE id="GYCiOd" name="StartSplashScreen.h" compile="0" resource="0"
+              file="Source/StartSplashScreen.h"/>
+        <FILE id="yE01eU" name="StartSplashWindow.cpp" compile="1" resource="0"
+              file="Source/StartSplashWindow.cpp"/>
+        <FILE id="tqcsOG" name="StartSplashWindow.h" compile="0" resource="0"
+              file="Source/StartSplashWindow.h"/>
+      </GROUP>
+      <GROUP id="{78C3C251-8374-3633-E37B-FFED66427753}" name="UserInterface">
+        <GROUP id="{3D7EB50F-DA37-A29D-48F4-C58FED653301}" name="CustomLookAndFeels">
+          <FILE id="LUa1fj" name="CustomAddButton_LF_01.h" compile="0" resource="0"
+                file="Source/CustomAddButton_LF_01.h"/>
+          <FILE id="H9y8Cf" name="CustomAddButton_LF_02.h" compile="0" resource="0"
+                file="Source/CustomAddButton_LF_02.h"/>
+          <FILE id="ZjzyqY" name="CustomMoveButton_LF_01.h" compile="0" resource="0"
+                file="Source/CustomMoveButton_LF_01.h"/>
+          <FILE id="eqPZUW" name="CustomMoveButton_LF_02.h" compile="0" resource="0"
+                file="Source/CustomMoveButton_LF_02.h"/>
+          <FILE id="GQ9dNe" name="CustomScrollBar_LF_01.h" compile="0" resource="0"
+                file="Source/CustomScrollBar_LF_01.h"/>
+          <FILE id="xL3gj5" name="CustomSlider_LF_01.h" compile="0" resource="0"
+                file="Source/CustomSlider_LF_01.h"/>
+          <FILE id="T8sQYg" name="CustomToggleButton_LF_01.h" compile="0" resource="0"
+                file="Source/CustomToggleButton_LF_01.h"/>
+          <FILE id="J5r9ES" name="CustomZoomButton_LF_01.h" compile="0" resource="0"
+                file="Source/CustomZoomButton_LF_01.h"/>
+        </GROUP>
+        <GROUP id="{9093FFCE-310E-D8ED-6916-DD8B279B90BC}" name="Utils">
+          <FILE id="ktOBoK" name="BidirectionalLinkedViewport.h" compile="0"
+                resource="0" file="Source/BidirectionalLinkedViewport.h"/>
+        </GROUP>
+        <GROUP id="{4C7D3674-EF41-A64F-BCD3-CE11F92BEBD2}" name="PlaylistInterface">
+          <GROUP id="{43A8F985-39E9-F35B-5CE0-1FA6393E6026}" name="CustomComponents">
+            <FILE id="P2HJrs" name="AudioTimeAdjusterWindow.cpp" compile="1" resource="0"
+                  file="Source/AudioTimeAdjusterWindow.cpp"/>
+            <FILE id="kXSNzq" name="AudioTimeAdjusterWindow.h" compile="0" resource="0"
+                  file="Source/AudioTimeAdjusterWindow.h"/>
+            <FILE id="P3E7Vc" name="MuteSoloComponentPlaylist.cpp" compile="1"
+                  resource="0" file="Source/MuteSoloComponentPlaylist.cpp"/>
+            <FILE id="nedDYM" name="MuteSoloComponentPlaylist.h" compile="0" resource="0"
+                  file="Source/MuteSoloComponentPlaylist.h"/>
+            <FILE id="RAwSE9" name="TransportComponent.cpp" compile="1" resource="0"
+                  file="Source/TransportComponent.cpp"/>
+            <FILE id="tGjbBG" name="TransportComponent.h" compile="0" resource="0"
+                  file="Source/TransportComponent.h"/>
+            <FILE id="fI0gnl" name="TransportBoxComponent.cpp" compile="1" resource="0"
+                  file="Source/TransportBoxComponent.cpp"/>
+            <FILE id="rQOSw7" name="TransportBoxComponent.h" compile="0" resource="0"
+                  file="Source/TransportBoxComponent.h"/>
+            <FILE id="iIqs4S" name="AudioChannelPlaylistUI.cpp" compile="1" resource="0"
+                  file="Source/AudioChannelPlaylistUI.cpp"/>
+            <FILE id="o0O9my" name="AudioChannelPlaylistUI.h" compile="0" resource="0"
+                  file="Source/AudioChannelPlaylistUI.h"/>
+            <FILE id="JlgOD2" name="AudioThumbnailChannelPlaylistUI.cpp" compile="1"
+                  resource="0" file="Source/AudioThumbnailChannelPlaylistUI.cpp"/>
+            <FILE id="ppmaKK" name="AudioThumbnailChannelPlaylistUI.h" compile="0"
+                  resource="0" file="Source/AudioThumbnailChannelPlaylistUI.h"/>
+          </GROUP>
+          <FILE id="ln4JRI" name="PlaylistChannelsView.cpp" compile="1" resource="0"
+                file="Source/PlaylistChannelsView.cpp"/>
+          <FILE id="QYkdWq" name="PlaylistChannelsView.h" compile="0" resource="0"
+                file="Source/PlaylistChannelsView.h"/>
+          <FILE id="fyhvzS" name="PlaylistThumbnailChannelsView.cpp" compile="1"
+                resource="0" file="Source/PlaylistThumbnailChannelsView.cpp"/>
+          <FILE id="etqaAP" name="PlaylistThumbnailChannelsView.h" compile="0"
+                resource="0" file="Source/PlaylistThumbnailChannelsView.h"/>
+          <FILE id="VuaSJP" name="PlaylistView.cpp" compile="1" resource="0"
+                file="Source/PlaylistView.cpp"/>
+          <FILE id="rver5b" name="PlaylistView.h" compile="0" resource="0" file="Source/PlaylistView.h"/>
+        </GROUP>
+        <GROUP id="{7C5CFAB6-B4D3-1139-4B14-CFF84AC9110B}" name="Footer">
+          <FILE id="sBVc5E" name="BpmEditor.cpp" compile="1" resource="0" file="Source/BpmEditor.cpp"/>
+          <FILE id="IvwNWh" name="BpmEditor.h" compile="0" resource="0" file="Source/BpmEditor.h"/>
+          <FILE id="uVEUiX" name="Footer.cpp" compile="1" resource="0" file="Source/Footer.cpp"/>
+          <FILE id="EjK4ID" name="Footer.h" compile="0" resource="0" file="Source/Footer.h"/>
+          <FILE id="cbT9GK" name="PlayerControlGrid.cpp" compile="1" resource="0"
+                file="Source/PlayerControlGrid.cpp"/>
+          <FILE id="jTMtNz" name="PlayerControlGrid.h" compile="0" resource="0"
+                file="Source/PlayerControlGrid.h"/>
+          <FILE id="BRoIys" name="PlaylistZoomComponent.cpp" compile="1" resource="0"
+                file="Source/PlaylistZoomComponent.cpp"/>
+          <FILE id="nlaD5l" name="PlaylistZoomComponent.h" compile="0" resource="0"
+                file="Source/PlaylistZoomComponent.h"/>
+          <FILE id="Y3AUcJ" name="PlayPauseButton.cpp" compile="1" resource="0"
+                file="Source/PlayPauseButton.cpp"/>
+          <FILE id="ll571q" name="PlayPauseButton.h" compile="0" resource="0"
+                file="Source/PlayPauseButton.h"/>
+          <FILE id="m87GgJ" name="StopButton.cpp" compile="1" resource="0" file="Source/StopButton.cpp"/>
+          <FILE id="ulemDp" name="StopButton.h" compile="0" resource="0" file="Source/StopButton.h"/>
+          <FILE id="hutWZx" name="TimeViewer.cpp" compile="1" resource="0" file="Source/TimeViewer.cpp"/>
+          <FILE id="yrMd9v" name="TimeViewer.h" compile="0" resource="0" file="Source/TimeViewer.h"/>
+          <FILE id="BrhPz4" name="ViewSelectorColumn.cpp" compile="1" resource="0"
+                file="Source/ViewSelectorColumn.cpp"/>
+          <FILE id="FrpxvQ" name="ViewSelectorColumn.h" compile="0" resource="0"
+                file="Source/ViewSelectorColumn.h"/>
+        </GROUP>
+        <GROUP id="{EF5DACD9-1B39-20AA-06BA-9AC9D8775BF9}" name="MixerInterface">
+          <FILE id="fJqhBi" name="CableRoutingViewOverlay.cpp" compile="1" resource="0"
+                file="Source/CableRoutingViewOverlay.cpp"/>
+          <FILE id="XeA0oe" name="CableRoutingViewOverlay.h" compile="0" resource="0"
+                file="Source/CableRoutingViewOverlay.h"/>
+          <GROUP id="{618DA23B-0C10-A1F1-9ABC-CD0443D8E4F1}" name="PluginSystemsUI">
+            <GROUP id="{D7B2C0F1-5A87-6726-E2AA-56C89BC47EED}" name="CustomComponents">
+              <FILE id="wWFv7D" name="PluginAddButtonCustom.cpp" compile="1" resource="0"
+                    file="Source/PluginAddButtonCustom.cpp"/>
+              <FILE id="gw91F1" name="PluginAddButtonCustom.h" compile="0" resource="0"
+                    file="Source/PluginAddButtonCustom.h"/>
+              <FILE id="uE45pz" name="PluginComponentBypassToggleButton.cpp" compile="1"
+                    resource="0" file="Source/PluginComponentBypassToggleButton.cpp"/>
+              <FILE id="spLBLf" name="PluginComponentBypassToggleButton.h" compile="0"
+                    resource="0" file="Source/PluginComponentBypassToggleButton.h"/>
+              <FILE id="DQxiQO" name="PluginContainerDeleteButton.cpp" compile="1"
+                    resource="0" file="Source/PluginContainerDeleteButton.cpp"/>
+              <FILE id="coVJYW" name="PluginContainerDeleteButton.h" compile="0"
+                    resource="0" file="Source/PluginContainerDeleteButton.h"/>
+              <FILE id="bPy8YK" name="PluginContainerMoveContainer.cpp" compile="1"
+                    resource="0" file="Source/PluginContainerMoveContainer.cpp"/>
+              <FILE id="CDzi2L" name="PluginContainerMoveContainer.h" compile="0"
+                    resource="0" file="Source/PluginContainerMoveContainer.h"/>
+              <FILE id="tpkZAY" name="PluginContainerMoveDownButton.cpp" compile="1"
+                    resource="0" file="Source/PluginContainerMoveDownButton.cpp"/>
+              <FILE id="Pj9PZa" name="PluginContainerMoveDownButton.h" compile="0"
+                    resource="0" file="Source/PluginContainerMoveDownButton.h"/>
+              <FILE id="FTEl4r" name="PluginContainerMoveUpButton.cpp" compile="1"
+                    resource="0" file="Source/PluginContainerMoveUpButton.cpp"/>
+              <FILE id="zZLUk0" name="PluginContainerMoveUpButton.h" compile="0"
+                    resource="0" file="Source/PluginContainerMoveUpButton.h"/>
+              <FILE id="puGRpV" name="PluginContainerTextName.cpp" compile="1" resource="0"
+                    file="Source/PluginContainerTextName.cpp"/>
+              <FILE id="MHvoYa" name="PluginContainerTextName.h" compile="0" resource="0"
+                    file="Source/PluginContainerTextName.h"/>
+              <FILE id="OdHJU0" name="PluginSelectorComponent.cpp" compile="1" resource="0"
+                    file="Source/PluginSelectorComponent.cpp"/>
+              <FILE id="NDcirl" name="PluginSelectorComponent.h" compile="0" resource="0"
+                    file="Source/PluginSelectorComponent.h"/>
+              <FILE id="tifO4o" name="PluginSelectorWindow.cpp" compile="1" resource="0"
+                    file="Source/PluginSelectorWindow.cpp"/>
+              <FILE id="Ni4XaN" name="PluginSelectorWindow.h" compile="0" resource="0"
+                    file="Source/PluginSelectorWindow.h"/>
+            </GROUP>
+            <FILE id="KIKpP2" name="PluginContainerUI.cpp" compile="1" resource="0"
+                  file="Source/PluginContainerUI.cpp"/>
+            <FILE id="Q5YZg9" name="PluginContainerUI.h" compile="0" resource="0"
+                  file="Source/PluginContainerUI.h"/>
+            <FILE id="ZQg63F" name="PluginListContainerUI.cpp" compile="1" resource="0"
+                  file="Source/PluginListContainerUI.cpp"/>
+            <FILE id="SBZ2vP" name="PluginListContainerUI.h" compile="0" resource="0"
+                  file="Source/PluginListContainerUI.h"/>
+            <FILE id="lZm6Lp" name="PluginUI.cpp" compile="1" resource="0" file="Source/PluginUI.cpp"/>
+            <FILE id="g3nCUN" name="PluginUI.h" compile="0" resource="0" file="Source/PluginUI.h"/>
+          </GROUP>
+          <GROUP id="{4B220F9E-17E9-A80E-4824-1777A93393C2}" name="CustomComponents">
+            <FILE id="WdBNjp" name="ChannelColourSelector.cpp" compile="1" resource="0"
+                  file="Source/ChannelColourSelector.cpp"/>
+            <FILE id="jIj0PF" name="ChannelColourSelector.h" compile="0" resource="0"
+                  file="Source/ChannelColourSelector.h"/>
+            <FILE id="Ser15U" name="ChannelNameLabel.cpp" compile="1" resource="0"
+                  file="Source/ChannelNameLabel.cpp"/>
+            <FILE id="aLpHtP" name="ChannelNameLabel.h" compile="0" resource="0"
+                  file="Source/ChannelNameLabel.h"/>
+            <FILE id="CYpN8a" name="ChannelVolumeSlider.cpp" compile="1" resource="0"
+                  file="Source/ChannelVolumeSlider.cpp"/>
+            <FILE id="or44JV" name="ChannelVolumeSlider.h" compile="0" resource="0"
+                  file="Source/ChannelVolumeSlider.h"/>
+            <FILE id="DhW5OV" name="ColourPickComponent.cpp" compile="1" resource="0"
+                  file="Source/ColourPickComponent.cpp"/>
+            <FILE id="HNzi5u" name="ColourPickComponent.h" compile="0" resource="0"
+                  file="Source/ColourPickComponent.h"/>
+            <FILE id="mEIGI2" name="DeleteButton.cpp" compile="1" resource="0"
+                  file="Source/DeleteButton.cpp"/>
+            <FILE id="KjYW9w" name="DeleteButton.h" compile="0" resource="0" file="Source/DeleteButton.h"/>
+            <FILE id="jUcwp5" name="MoveComponent.cpp" compile="1" resource="0"
+                  file="Source/MoveComponent.cpp"/>
+            <FILE id="geGxUJ" name="MoveComponent.h" compile="0" resource="0" file="Source/MoveComponent.h"/>
+            <FILE id="TXX3Np" name="MoveLeftButton.cpp" compile="1" resource="0"
+                  file="Source/MoveLeftButton.cpp"/>
+            <FILE id="YFpKlq" name="MoveLeftButton.h" compile="0" resource="0"
+                  file="Source/MoveLeftButton.h"/>
+            <FILE id="R3uNP7" name="MoveRightButton.cpp" compile="1" resource="0"
+                  file="Source/MoveRightButton.cpp"/>
+            <FILE id="yitWTO" name="MoveRightButton.h" compile="0" resource="0"
+                  file="Source/MoveRightButton.h"/>
+            <FILE id="rzeSRR" name="MuteButton.cpp" compile="1" resource="0" file="Source/MuteButton.cpp"/>
+            <FILE id="X4n2FH" name="MuteButton.h" compile="0" resource="0" file="Source/MuteButton.h"/>
+            <FILE id="HpL7fi" name="MuteSoloComponent.cpp" compile="1" resource="0"
+                  file="Source/MuteSoloComponent.cpp"/>
+            <FILE id="dU51Xh" name="MuteSoloComponent.h" compile="0" resource="0"
+                  file="Source/MuteSoloComponent.h"/>
+            <FILE id="q30TNN" name="PanKnobSlider.cpp" compile="1" resource="0"
+                  file="Source/PanKnobSlider.cpp"/>
+            <FILE id="DMniOu" name="PanKnobSlider.h" compile="0" resource="0" file="Source/PanKnobSlider.h"/>
+            <FILE id="PIS0Ds" name="RouteInButton.cpp" compile="1" resource="0"
+                  file="Source/RouteInButton.cpp"/>
+            <FILE id="ZlcNWA" name="RouteInButton.h" compile="0" resource="0" file="Source/RouteInButton.h"/>
+            <FILE id="TGMNXF" name="RouteToButton.cpp" compile="1" resource="0"
+                  file="Source/RouteToButton.cpp"/>
+            <FILE id="OfNY5F" name="RouteToButton.h" compile="0" resource="0" file="Source/RouteToButton.h"/>
+            <FILE id="F6C0aQ" name="SoloButton.cpp" compile="1" resource="0" file="Source/SoloButton.cpp"/>
+            <FILE id="ltoePY" name="SoloButton.h" compile="0" resource="0" file="Source/SoloButton.h"/>
+            <FILE id="sWW8I0" name="SoloControlSingleton.cpp" compile="1" resource="0"
+                  file="Source/SoloControlSingleton.cpp"/>
+            <FILE id="TOtj5W" name="SoloControlSingleton.h" compile="0" resource="0"
+                  file="Source/SoloControlSingleton.h"/>
+            <FILE id="xczXsO" name="ViewRoutesChannel.cpp" compile="1" resource="0"
+                  file="Source/ViewRoutesChannel.cpp"/>
+            <FILE id="JSUa9f" name="ViewRoutesChannel.h" compile="0" resource="0"
+                  file="Source/ViewRoutesChannel.h"/>
+          </GROUP>
+          <FILE id="y73g7h" name="AudioChannelMixerUI.cpp" compile="1" resource="0"
+                file="Source/AudioChannelMixerUI.cpp"/>
+          <FILE id="Kgg4wl" name="AudioChannelMixerUI.h" compile="0" resource="0"
+                file="Source/AudioChannelMixerUI.h"/>
+          <FILE id="cTBWjB" name="MasterBusChannelUI.cpp" compile="1" resource="0"
+                file="Source/MasterBusChannelUI.cpp"/>
+          <FILE id="fKzurW" name="MasterBusChannelUI.h" compile="0" resource="0"
+                file="Source/MasterBusChannelUI.h"/>
+          <FILE id="j2W3u8" name="MixBusChannelUI.cpp" compile="1" resource="0"
+                file="Source/MixBusChannelUI.cpp"/>
+          <FILE id="UKSuzL" name="MixBusChannelUI.h" compile="0" resource="0"
+                file="Source/MixBusChannelUI.h"/>
+          <FILE id="W5qSNE" name="MixerChannelsView.cpp" compile="1" resource="0"
+                file="Source/MixerChannelsView.cpp"/>
+          <FILE id="ANNoxH" name="MixerChannelsView.h" compile="0" resource="0"
+                file="Source/MixerChannelsView.h"/>
+          <FILE id="yBC3Mp" name="MixerView.cpp" compile="1" resource="0" file="Source/MixerView.cpp"/>
+          <FILE id="Szk58p" name="MixerView.h" compile="0" resource="0" file="Source/MixerView.h"/>
+          <FILE id="yhlBbD" name="PluginRackChannelUI.cpp" compile="1" resource="0"
+                file="Source/PluginRackChannelUI.cpp"/>
+          <FILE id="k48YqB" name="PluginRackChannelUI.h" compile="0" resource="0"
+                file="Source/PluginRackChannelUI.h"/>
+          <FILE id="e4b9uc" name="RoutingOverlay.cpp" compile="1" resource="0"
+                file="Source/RoutingOverlay.cpp"/>
+          <FILE id="dZdmRO" name="RoutingOverlay.h" compile="0" resource="0"
+                file="Source/RoutingOverlay.h"/>
+        </GROUP>
+        <FILE id="KYMbck" name="EgawMenuBarModel.cpp" compile="1" resource="0"
+              file="Source/EgawMenuBarModel.cpp"/>
+        <FILE id="IFdp7I" name="EgawMenuBarModel.h" compile="0" resource="0"
+              file="Source/EgawMenuBarModel.h"/>
+        <FILE id="TyZH07" name="UserInterfaceManager.cpp" compile="1" resource="0"
+              file="Source/UserInterfaceManager.cpp"/>
+        <FILE id="M3m859" name="UserInterfaceManager.h" compile="0" resource="0"
+              file="Source/UserInterfaceManager.h"/>
+      </GROUP>
+      <GROUP id="{55C6A2A4-DA67-9384-ABFC-5F2F505753E0}" name="DataSystem">
+        <FILE id="wI8oeX" name="UndoManager.cpp" compile="1" resource="0" file="Source/UndoManager.cpp"/>
+        <FILE id="h5GTWt" name="UndoManager.h" compile="0" resource="0" file="Source/UndoManager.h"/>
+      </GROUP>
+      <GROUP id="{A6D5D8A7-4C3B-65D6-F155-3E70F098F66C}" name="AudioSystem">
+        <GROUP id="{60EC990F-A1FD-B38E-13FE-E7D2C5D1E631}" name="PluginSystems">
+          <FILE id="eE7P02" name="Plugin.cpp" compile="1" resource="0" file="Source/Plugin.cpp"/>
+          <FILE id="chcF53" name="Plugin.h" compile="0" resource="0" file="Source/Plugin.h"/>
+          <FILE id="HXgQWC" name="PluginList.cpp" compile="1" resource="0" file="Source/PluginList.cpp"/>
+          <FILE id="TTXjOv" name="PluginList.h" compile="0" resource="0" file="Source/PluginList.h"/>
+        </GROUP>
+        <GROUP id="{284E4460-27F1-F49A-584E-A8E8123D0A74}" name="ExportingAudio">
+          <FILE id="HO9weq" name="ProgressWindowUI.cpp" compile="1" resource="0"
+                file="Source/ProgressWindowUI.cpp"/>
+          <FILE id="cvYzzW" name="ProgressWindowUI.h" compile="0" resource="0"
+                file="Source/ProgressWindowUI.h"/>
+          <FILE id="UEoJgY" name="RenderThread.cpp" compile="1" resource="0"
+                file="Source/RenderThread.cpp"/>
+          <FILE id="d1bTmV" name="RenderThread.h" compile="0" resource="0" file="Source/RenderThread.h"/>
+        </GROUP>
+        <FILE id="Ogt6lT" name="AudioChannel.cpp" compile="1" resource="0"
+              file="Source/AudioChannel.cpp"/>
+        <FILE id="ez5uEy" name="AudioChannel.h" compile="0" resource="0" file="Source/AudioChannel.h"/>
+        <FILE id="H70nE0" name="AudioSystemBus.cpp" compile="1" resource="0"
+              file="Source/AudioSystemBus.cpp"/>
+        <FILE id="BpFJ6f" name="AudioSystemBus.h" compile="0" resource="0"
+              file="Source/AudioSystemBus.h"/>
+        <FILE id="sbcRAb" name="Channel.cpp" compile="1" resource="0" file="Source/Channel.cpp"/>
+        <FILE id="tCUI8o" name="Channel.h" compile="0" resource="0" file="Source/Channel.h"/>
+        <FILE id="i2v9AV" name="GlobalPlayhead.cpp" compile="1" resource="0"
+              file="Source/GlobalPlayhead.cpp"/>
+        <FILE id="otaN9p" name="GlobalPlayhead.h" compile="0" resource="0"
+              file="Source/GlobalPlayhead.h"/>
+        <FILE id="aWF80a" name="MixBusChannel.cpp" compile="1" resource="0"
+              file="Source/MixBusChannel.cpp"/>
+        <FILE id="hLIhZA" name="MixBusChannel.h" compile="0" resource="0" file="Source/MixBusChannel.h"/>
+        <FILE id="FBX3AJ" name="PluginRackChannel.cpp" compile="1" resource="0"
+              file="Source/PluginRackChannel.cpp"/>
+        <FILE id="ZF47KI" name="PluginRackChannel.h" compile="0" resource="0"
+              file="Source/PluginRackChannel.h"/>
+        <FILE id="Gejvuf" name="RoutableChannel.cpp" compile="1" resource="0"
+              file="Source/RoutableChannel.cpp"/>
+        <FILE id="fx8SWj" name="RoutableChannel.h" compile="0" resource="0"
+              file="Source/RoutableChannel.h"/>
+      </GROUP>
+      <FILE id="Da7j4A" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="kVqrzX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="lTiu8u" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_analytics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_animation" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_box2d" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_javascript" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_midi_ci" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_product_unlocking" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_PLUGINHOST_VST="0" JUCE_PLUGINHOST_VST3="1"
+               JUCE_PLUGINHOST_AU="0"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022" bigIcon="TEiOpJ" smallIcon="EhGs7M">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="EGAW Application"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="EGAW Application"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_analytics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_animation" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_box2d" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_javascript" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_midi_ci" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_product_unlocking" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../../../JUCE installation/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>

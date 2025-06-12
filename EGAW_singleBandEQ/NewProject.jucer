@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="FEiRIn" name="EGAW_SingleBandEQ" projectType="audioplug"
+              useAppConfig="0" addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1"
+              version="0.1" pluginAAXCategory="1" pluginFormats="buildVST3">
+  <MAINGROUP id="O1BXqw" name="EGAW_SingleBandEQ">
+    <GROUP id="{A0A4B800-5E1D-074C-FE7E-361944BB26A8}" name="Source">
+      <FILE id="C4GSbQ" name="ColourConstants.h" compile="0" resource="0"
+            file="Source/ColourConstants.h"/>
+      <GROUP id="{DF13D85A-B755-52A7-EB8D-E570A25E07B2}" name="LookAndFeels">
+        <FILE id="I4b4MG" name="FrequencySlider_LF.h" compile="0" resource="0"
+              file="Source/FrequencySlider_LF.h"/>
+        <FILE id="QxdBta" name="VolumeSlider_LF.h" compile="0" resource="0"
+              file="Source/VolumeSlider_LF.h"/>
+      </GROUP>
+      <GROUP id="{8C24E4A7-30F0-AAF3-A8DD-B439111BC045}" name="Components">
+        <FILE id="iOuNVW" name="FrequencySlider.cpp" compile="1" resource="0"
+              file="Source/FrequencySlider.cpp"/>
+        <FILE id="Fh8pvj" name="FrequencySlider.h" compile="0" resource="0"
+              file="Source/FrequencySlider.h"/>
+        <FILE id="G6vbV8" name="VolumeSlider.cpp" compile="1" resource="0"
+              file="Source/VolumeSlider.cpp"/>
+        <FILE id="NM5lkT" name="VolumeSlider.h" compile="0" resource="0" file="Source/VolumeSlider.h"/>
+      </GROUP>
+      <FILE id="udwEjc" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="l0x0BX" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="SBEoeq" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="v5Unwi" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="EGAW_SingleBandEQ"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="EGAW_SingleBandEQ" enablePluginBinaryCopyStep="1"
+                       vst3BinaryLocation_x64="C:\Program Files\VST3" vst3BinaryLocation_Win32="C:\Program Files\VST3"
+                       vst3BinaryLocation_arm64="C:\Program Files\VST3" vst3BinaryLocation_arm64ec="C:\Program Files\VST3"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../JUCE installation/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="../../../../JUCE installation/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
